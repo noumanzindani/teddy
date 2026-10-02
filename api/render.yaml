@@ -1,0 +1,55 @@
+services:
+  - type: web
+    name: teddy-api
+    runtime: node
+    region: oregon
+    plan: free
+    rootDir: .
+    buildCommand: npm install && npm run db:generate && npm run build
+    startCommand: npx prisma migrate deploy && node dist/server.js
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 4000
+      - key: DATABASE_URL
+        fromDatabase:
+          name: teddy-db
+          property: connectionString
+      - key: REDIS_URL
+        fromService:
+          name: teddy-redis
+          type: redis
+          property: connectionString
+      - key: JWT_ACCESS_EXPIRY
+        value: 15m
+      - key: JWT_REFRESH_EXPIRY
+        value: 7d
+      - key: PAYMENT_MOCK_MODE
+        value: "true"
+      - key: OTP_MOCK_MODE
+        value: "true"
+      - key: EMAIL_MOCK_MODE
+        value: "true"
+      - key: PUSH_MOCK_MODE
+        value: "true"
+      - key: MEDIA_MOCK_MODE
+        value: "true"
+      - key: PLATFORM_COMMISSION_RATE
+        value: "0.15"
+      - key: POINTS_PER_DOLLAR
+        value: "10"
+      - key: PAYOUT_DELAY_DAYS
+        value: "2"
+      # JWT_PRIVATE_KEY_B64 and JWT_PUBLIC_KEY_B64 must be set manually in Render dashboard
+      # CORS_ORIGINS must be set manually after getting the Render URL
+
+databases:
+  - name: teddy-db
+    plan: free
+    region: oregon
+
+  - name: teddy-redis
+    plan: free
+    region: oregon
+    type: redis

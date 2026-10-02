@@ -1,0 +1,43 @@
+# U3 — Book a real service end to end: salon → service → slot → specialist → intake → summary → pay.
+# After the run, qa/api/check-u3.mjs verifies what (if anything) reached the database.
+appId: com.teddybookingllc.teddy
+name: U3 Booking
+env:
+  EMAIL: qa.client1@example.com
+  PASSWORD: Password123!
+---
+- runFlow: _login.yaml
+- extendedWaitUntil: { visible: "Home, tab.*", timeout: 15000 }
+- runFlow: _dismiss-logbox.yaml
+- tapOn: "Services, tab.*"
+- extendedWaitUntil: { visible: "SS, Skincuress Salon.*", timeout: 15000 }
+- tapOn: "SS, Skincuress Salon.*"
+- extendedWaitUntil: { visible: "Providers Profile", timeout: 10000 }
+- tapOn: "Services"
+- extendedWaitUntil: { visible: "Body Wrap, 90 min.*", timeout: 10000 }
+- takeScreenshot: U3-01-real-services
+- tapOn: "Body Wrap, 90 min.*"
+- extendedWaitUntil: { visible: "Book This Service", timeout: 10000 }
+- takeScreenshot: U3-02-service-detail        # Body Wrap · $110 · 90 min · Skincuress
+- tapOn: "Book This Service"
+- extendedWaitUntil: { visible: "Select Time Slot", timeout: 10000 }
+- takeScreenshot: U3-03-timeslot              # BUG: shows mock "Glow Up Aesthetics · 45 min · $35"
+- tapOn: { text: "30", index: 1 }   # index 0 is the greyed Aug 30 from the previous month (see TDY-004)
+- tapOn: "1:00 PM"
+- tapOn: "Continue"
+- extendedWaitUntil: { visible: "Choose Your Specialist", timeout: 10000 }
+- takeScreenshot: U3-04-specialists           # BUG: mock staff, not the salon's real staff
+- tapOn: "Maya Johnson.*"
+- tapOn: "Continue"
+- extendedWaitUntil: { visible: "Pre-Visit Questionnaire", timeout: 10000 }
+- takeScreenshot: U3-05-intake                # BUG: date 2026-08-30 for a Sep 30 pick; "Signature Manicure"
+- tapOn: "Submit & Continue"
+- extendedWaitUntil: { visible: "Review Your Booking", timeout: 10000 }
+- takeScreenshot: U3-06-summary
+- tapOn: "Continue to Payment"
+- extendedWaitUntil: { visible: "Pay Now", timeout: 10000 }
+- takeScreenshot: U3-07-payment               # no amount shown anywhere
+- tapOn: "Pay Now"                            # card fields deliberately left empty
+- waitForAnimationToEnd: { timeout: 10000 }
+- takeScreenshot: U3-08-result
+- assertVisible: ".*[Cc]onfirmed.*"

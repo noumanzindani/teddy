@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TEDDY — Vendor Dashboard Flow</title>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+      background: #F0F2F5;
+      color: #1A1F2E;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ── Top Bar ── */
+    header {
+      background: #1A1F2E;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 32px;
+      height: 56px;
+      border-bottom: 3px solid #F5A623;
+      flex-shrink: 0;
+    }
+    header .brand {
+      font-size: 20px;
+      font-weight: 800;
+      letter-spacing: 3px;
+      color: #F5A623;
+      text-transform: uppercase;
+    }
+    header .subtitle {
+      font-size: 13px;
+      font-weight: 500;
+      color: #A8B3CC;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+
+    /* ── Main Content ── */
+    main {
+      flex: 1;
+      padding: 28px 32px 32px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    /* ── Legend ── */
+    .legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px 24px;
+      align-items: center;
+      background: #fff;
+      border-radius: 10px;
+      padding: 14px 22px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    }
+    .legend-title {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1.2px;
+      color: #6B7385;
+      margin-right: 8px;
+    }
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      font-size: 12px;
+      font-weight: 600;
+      color: #3A3F50;
+    }
+    .legend-swatch {
+      width: 18px;
+      height: 18px;
+      border-radius: 4px;
+      flex-shrink: 0;
+      border: 2px solid rgba(0,0,0,0.15);
+    }
+    .swatch-start    { background: #F5A623; border-color: #E09420; border-radius: 50%; }
+    .swatch-process  { background: #4A90D9; border-color: #3A7BC8; }
+    .swatch-decision { background: #7B68EE; border-color: #6A57DD; transform: rotate(45deg); border-radius: 2px; }
+    .swatch-success  { background: #27AE60; border-color: #1E8449; }
+    .swatch-error    { background: #E74C3C; border-color: #C0392B; }
+    .swatch-highlight{ background: #E91E8C; border-color: #C2185B; }
+
+    /* ── Diagram Card ── */
+    .diagram-card {
+      background: #fff;
+      border-radius: 14px;
+      box-shadow: 0 4px 24px rgba(0,0,0,0.10), 0 1px 4px rgba(0,0,0,0.06);
+      padding: 32px 24px;
+      overflow-x: auto;
+      flex: 1;
+    }
+    .diagram-card .mermaid {
+      min-width: 900px;
+    }
+
+    /* ── Footer ── */
+    footer {
+      background: #1A1F2E;
+      color: #A8B3CC;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 32px;
+      height: 42px;
+      flex-shrink: 0;
+      font-size: 12px;
+      letter-spacing: 0.5px;
+    }
+    footer .footer-left { font-weight: 600; color: #D0D7E6; }
+    footer .footer-right { font-weight: 500; color: #F5A623; }
+  </style>
+</head>
+<body>
+
+  <header>
+    <span class="brand">TEDDY Platform</span>
+    <span class="subtitle">Vendor Web Dashboard Flow</span>
+  </header>
+
+  <main>
+
+    <!-- Legend -->
+    <div class="legend">
+      <span class="legend-title">Legend</span>
+
+      <div class="legend-item">
+        <div class="legend-swatch swatch-start"></div>
+        Start
+      </div>
+      <div class="legend-item">
+        <div class="legend-swatch swatch-process"></div>
+        Process / Screen
+      </div>
+      <div class="legend-item">
+        <div class="legend-swatch swatch-decision"></div>
+        Decision
+      </div>
+      <div class="legend-item">
+        <div class="legend-swatch swatch-success"></div>
+        Success
+      </div>
+      <div class="legend-item">
+        <div class="legend-swatch swatch-error"></div>
+        Error / Blocked
+      </div>
+      <div class="legend-item">
+        <div class="legend-swatch swatch-highlight"></div>
+        Highlight
+      </div>
+    </div>
+
+    <!-- Diagram -->
+    <div class="diagram-card">
+      <div class="mermaid">
+%%{init: {"theme": "base", "themeVariables": {"fontFamily": "Arial", "fontSize": "20px", "primaryColor": "#4A90D9", "primaryTextColor": "#fff", "primaryBorderColor": "#3A7BC8", "lineColor": "#6B7385", "secondaryColor": "#7B68EE", "tertiaryColor": "#F0F2F5"}}}%%
+flowchart TD
+    S([START]) --> ACCTQ{Account\nExists?}
+    ACCTQ -->|New Vendor| APPLY[Submit Vendor Application\nBusiness Name · Address · Category · Hours]
+    APPLY --> PENDINGST[Application Pending\nAwaiting Admin Review]
+    PENDINGST --> ADMINDEC{Admin\nDecision?}
+    ADMINDEC -->|Rejected| REJECTED([Application Rejected\nEmail Notification Sent])
+    ADMINDEC -->|Needs Info| MOREINFO[Provide Additional\nDocuments or Info]
+    MOREINFO --> PENDINGST
+    ADMINDEC -->|Approved| STRIPEOB[Complete Stripe Connect\nOnboarding - Bank Account]
+    STRIPEOB --> GOLIVE[Salon Now Live\nVisible to Clients]
+    GOLIVE --> VENDLOGIN
+
+    ACCTQ -->|Existing| VENDLOGIN[Vendor Login\nvendor.teddy.app]
+    VENDLOGIN --> AUTHV{Credentials\nValid?}
+    AUTHV -->|No| VENDLOGIN
+    AUTHV -->|Yes| DASH[Vendor Dashboard\nRevenue · Bookings · Rating KPIs]
+
+    DASH --> VSECTION{Select\nSection}
+
+    VSECTION -->|Bookings| BOOKLIST[Bookings List\nAll Statuses]
+    BOOKLIST --> BSTATV{Booking\nAction?}
+    BSTATV -->|View New| VIEWBOOK[View Booking Details\nClient · Service · Time]
+    VIEWBOOK --> STARTQ{Mark as\nStarted?}
+    STARTQ -->|Yes| INPROG[Mark In-Progress\nClient Notified]
+    INPROG --> COMPLETEQ{Service\nDone?}
+    COMPLETEQ -->|Completed| MARKDONE[Mark Completed\nPoints Awarded to Client]
+    MARKDONE --> PAYOUTSCHED[Payout Scheduled\nT+2 Days via Stripe]
+    COMPLETEQ -->|No-Show| NOSHOW[Mark No-Show\nNo Refund to Client]
+    BSTATV -->|Cancel| CANCELBOOK[Cancel Booking\nEnter Reason]
+    CANCELBOOK --> FULLREFUND[Full Refund Issued\nto Client Automatically]
+
+    VSECTION -->|Calendar| CALVIEW[Calendar View\nWeekly / Monthly]
+    CALVIEW --> CALACT{Calendar\nAction?}
+    CALACT -->|View Day| DAYVIEW[Day View\nAll Appointments Timetable]
+    CALACT -->|Block Time| BLOCKTIME[Block Time Slot\nUnavailable for Booking]
+
+    VSECTION -->|Services| SVCLIST[Services List\nActive and Inactive]
+    SVCLIST --> SVCACT{Service\nAction?}
+    SVCACT -->|Add New| ADDSVC[Add Service\nName · Price · Duration · Category]
+    ADDSVC --> SAVESVC[Service Saved\nVisible to Clients]
+    SVCACT -->|Edit| EDITSVC[Edit Service Details\nUpdate Price or Duration]
+    EDITSVC --> SAVESVC
+    SVCACT -->|Toggle| TOGGLESVC[Enable or Disable\nService Visibility]
+
+    VSECTION -->|Team| TEAMPAGE[Team Roster\nAll Staff Members]
+    TEAMPAGE --> TEAMACT{Team\nAction?}
+    TEAMACT -->|Invite| INVITEFORM[Enter Staff Email\nand Job Title]
+    INVITEFORM --> INVSENT[Invite Email Sent\nAwaiting Acceptance]
+    INVSENT --> ACCEPTQ{Staff\nAccepted?}
+    ACCEPTQ -->|Yes| STAFFACTIVE[Staff Member Active\nOn Roster and Calendar]
+    ACCEPTQ -->|Pending| INVSENT
+    TEAMACT -->|View Stats| STAFFSTATS[Staff Performance\nRating · Bookings · Earnings]
+    TEAMACT -->|Remove| REMOVESTAFF[Remove Staff Member\nBookings Reassigned]
+
+    VSECTION -->|Clients| CLIENTLIST[Client CRM List\nAll Booking Clients]
+    CLIENTLIST --> CLIENTACT{Client\nAction?}
+    CLIENTACT -->|Message| STARTCHAT[Initiate Chat\nVendor-Initiated Only]
+    STARTCHAT --> TYPEMSG[Type and Send\nFirst Message]
+    TYPEMSG --> CLIENTNOTIF[Client Receives\nPush Notification]
+    CLIENTACT -->|View History| CLIENTHIST[View Client\nBooking History and Spend]
+
+    VSECTION -->|Chat| CHATV[Chat Inbox\nAll Active Threads]
+    CHATV --> CHATACT{Chat\nAction?}
+    CHATACT -->|New Thread| SELECTCLIENT[Select Client\nfrom Roster]
+    SELECTCLIENT --> SENDMSGV[Send First Message]
+    CHATACT -->|Reply| READREPLY[Read Client Reply\nSend Response]
+    CHATACT -->|Media| UPLOADMEDIA[Upload Image\nto Chat Thread]
+
+    VSECTION -->|Before-After| BAPHOTO[Select Booking\nfor Photo Upload]
+    BAPHOTO --> BEFOREUP[Upload Before Photo\nStart of Service]
+    BEFOREUP --> AFTERUP[Upload After Photo\nEnd of Service]
+    AFTERUP --> SHAREQ{Share with\nClient?}
+    SHAREQ -->|Yes| SHAREDONE[Client Notified\nCan View Transformation]
+    SHAREQ -->|No| DASH
+
+    VSECTION -->|Analytics| ANALYTICSP[Analytics Dashboard\nRevenue · Ratings · Heatmap]
+    ANALYTICSP --> DATERANGE[Select Date Range\nWeek · Month · Custom]
+    DATERANGE --> VIEWCHARTS[View Revenue Charts\nStaff Performance Table]
+    VIEWCHARTS --> EXPORTQ{Export\nReport?}
+    EXPORTQ -->|Yes| CSVDL[Download CSV Report]
+    EXPORTQ -->|No| DASH
+
+    VSECTION -->|Payouts| PAYOUTP[Payout History\nPaid and Pending]
+    PAYOUTP --> STRIPEDASH[Open Stripe Dashboard\nBank Transfers]
+
+    VSECTION -->|Settings| SETTINGSP[Settings Page\nProfile · Hours · Stripe]
+    SETTINGSP --> SETTACT{Update\nWhat?}
+    SETTACT -->|Profile| EDITPROFILE[Edit Business Info\nName · Bio · Photos · Address]
+    SETTACT -->|Hours| EDITHOURS[Edit Opening Hours\nPer Day of Week]
+    SETTACT -->|Stripe| STRIPELINK[Stripe Connect\nBank Account Settings]
+    EDITPROFILE --> SAVESET[Changes Saved\nLive Immediately]
+    EDITHOURS --> SAVESET
+    STRIPELINK --> SAVESET
+
+    classDef start fill:#F5A623,stroke:#E09420,color:#fff,font-weight:bold
+    classDef process fill:#4A90D9,stroke:#3A7BC8,color:#fff
+    classDef decision fill:#7B68EE,stroke:#6A57DD,color:#fff
+    classDef success fill:#27AE60,stroke:#1E8449,color:#fff
+    classDef error fill:#E74C3C,stroke:#C0392B,color:#fff
+    classDef highlight fill:#E91E8C,stroke:#C2185B,color:#fff
+    classDef terminal fill:#2C3E50,stroke:#1A252F,color:#fff
+
+    class S start
+    class APPLY,PENDINGST,MOREINFO,STRIPEOB,VENDLOGIN,BOOKLIST,VIEWBOOK,INPROG,CANCELBOOK,FULLREFUND,CALVIEW,DAYVIEW,BLOCKTIME,SVCLIST,ADDSVC,EDITSVC,TOGGLESVC,TEAMPAGE,INVITEFORM,INVSENT,STAFFSTATS,CLIENTLIST,STARTCHAT,TYPEMSG,CLIENTNOTIF,CLIENTHIST,CHATV,SELECTCLIENT,SENDMSGV,READREPLY,UPLOADMEDIA,BAPHOTO,BEFOREUP,AFTERUP,DATERANGE,VIEWCHARTS,STRIPEDASH,SETTINGSP,EDITPROFILE,EDITHOURS,STRIPELINK process
+    class ACCTQ,ADMINDEC,AUTHV,VSECTION,BSTATV,STARTQ,COMPLETEQ,CALACT,SVCACT,TEAMACT,ACCEPTQ,CLIENTACT,CHATACT,SHAREQ,EXPORTQ,SETTACT decision
+    class GOLIVE,MARKDONE,PAYOUTSCHED,STAFFACTIVE,SHAREDONE,SAVESVC,SAVESET,CSVDL success
+    class NOSHOW,REMOVESTAFF error
+    class DASH,ANALYTICSP,PAYOUTP highlight
+    class REJECTED terminal
+      </div>
+    </div>
+
+  </main>
+
+  <footer>
+    <span class="footer-left">Vendor Web Dashboard</span>
+    <span class="footer-right">vendor.teddy.app</span>
+  </footer>
+
+  <script>
+    mermaid.initialize({
+      startOnLoad: true,
+      theme: 'base',
+      themeVariables: {
+        fontFamily: 'Arial',
+        fontSize: "20px",
+        primaryColor: '#4A90D9',
+        primaryTextColor: '#ffffff',
+        primaryBorderColor: '#3A7BC8',
+        lineColor: '#6B7385',
+        secondaryColor: '#7B68EE',
+        tertiaryColor: '#F0F2F5',
+        edgeLabelBackground: '#F0F2F5',
+        clusterBkg: '#F0F2F5'
+      },
+      flowchart: {
+        curve: 'basis',
+        padding: 20,
+        nodeSpacing: 50,
+        rankSpacing: 60,
+        useMaxWidth: false
+      }
+    });
+  </script>
+
+</body>
+</html>

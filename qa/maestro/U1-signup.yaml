@@ -1,0 +1,35 @@
+# U1 — A new customer creates an account (qa.client1) the way a real user would.
+appId: com.teddybookingllc.teddy
+name: U1 Sign up
+---
+- runFlow: _launch.yaml
+- runFlow:
+    when:
+      visible: "Skip"
+    commands:
+      - tapOn: "Skip"
+- extendedWaitUntil: { visible: "Signup", timeout: 15000 }
+- takeScreenshot: U1-01-signup-empty
+- tapOn: "Full Name"
+- inputText: "Qa Clientone"
+- tapOn: "Email Address"
+- inputText: "qa.client1@example.com"
+- tapOn: "000 0000 00"
+- inputText: "5551234567"          # user types their national number next to the +1 label
+- tapOn: "Create your account to explore about our app"   # dismiss keyboard
+# iOS AutoFill blanks secure fields under automation — reveal both (eye icons) before typing.
+- tapOn: { point: "87%,52%" }
+- tapOn: { point: "87%,58%" }
+- tapOn: "Password"
+- inputText: "Password123!"
+- tapOn: "Confirm Password"
+- inputText: "Password123!"
+- tapOn: "Create your account to explore about our app"   # dismiss keyboard
+- tapOn: "I agree to the Terms & Privacy Policy"
+- takeScreenshot: U1-02-signup-filled
+- tapOn:
+    text: "Signup"
+    index: 1                        # the button, not the screen title
+- waitForAnimationToEnd: { timeout: 8000 }
+- takeScreenshot: U1-03-after-signup
+- assertVisible: "Let's Personalize Your Experience"

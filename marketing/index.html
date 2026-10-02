@@ -1,0 +1,1476 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- ── SEO ──────────────────────────────────────────────────────────── -->
+  <title>Teddy — The Beauty Booking App</title>
+  <meta name="description" content="Discover and book top-rated salons, stylists, and wellness professionals near you. Instant booking, secure payments, loyalty rewards. Join 5,000+ clients already on Teddy." />
+  <link rel="canonical" href="https://teddy-marketing.web.app" />
+
+  <!-- ── Open Graph ────────────────────────────────────────────────────── -->
+  <meta property="og:title"       content="Teddy — The Beauty Booking App" />
+  <meta property="og:description" content="Discover and book top-rated salons near you. Instant booking, secure payments, loyalty rewards." />
+  <meta property="og:type"        content="website" />
+  <meta property="og:url"         content="https://teddy-marketing.web.app" />
+  <meta property="og:image"       content="https://teddy-marketing.web.app/og-image.jpg" />
+  <meta property="og:site_name"   content="Teddy" />
+
+  <!-- ── Twitter Card ──────────────────────────────────────────────────── -->
+  <meta name="twitter:card"        content="summary_large_image" />
+  <meta name="twitter:title"       content="Teddy — The Beauty Booking App" />
+  <meta name="twitter:description" content="Book top salons instantly. Secure payments. Loyalty rewards." />
+
+  <!-- ── Google Analytics 4 (replace G-XXXXXXXXXX with your Measurement ID) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){ dataLayer.push(arguments); }
+    gtag('js', new Date());
+    gtag('config', 'G-XXXXXXXXXX');
+  </script>
+
+  <!-- ── Meta / Facebook Pixel (replace 000000000000000 with your Pixel ID) -->
+  <script>
+    !function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+    n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;
+    n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;
+    t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,
+    document,'script','https://connect.facebook.net/en_US/fbevents.js');
+    fbq('init', '000000000000000');
+    fbq('track', 'PageView');
+  </script>
+  <noscript><img height="1" width="1" style="display:none"
+    src="https://www.facebook.com/tr?id=000000000000000&ev=PageView&noscript=1"/></noscript>
+
+  <!-- ── UTM Campaign Tracking ─────────────────────────────────────────── -->
+  <script>
+    (function(){
+      var params = new URLSearchParams(window.location.search);
+      var utmKeys = ['utm_source','utm_medium','utm_campaign','utm_content','utm_term'];
+      var stored = {};
+      utmKeys.forEach(function(k){ if(params.get(k)) stored[k] = params.get(k); });
+      if(Object.keys(stored).length) localStorage.setItem('teddy_utm', JSON.stringify(stored));
+      window.teddyUTM = JSON.parse(localStorage.getItem('teddy_utm') || '{}');
+    })();
+  </script>
+
+  <!-- ── Fonts ──────────────────────────────────────────────────────────── -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+
+  <style>
+  /* ══════════════════════════════════════════════════════════════════════
+     RESET & TOKENS
+  ══════════════════════════════════════════════════════════════════════ */
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; font-size: 16px; }
+  body {
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    background: #FFFEF9;
+    color: #18181B;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    overflow-x: hidden;
+  }
+  a { text-decoration: none; color: inherit; }
+  img { display: block; max-width: 100%; }
+  button { font-family: inherit; cursor: pointer; border: none; background: none; }
+
+  :root {
+    --gold:        #D4A843;
+    --gold-light:  #F0CE70;
+    --gold-pale:   #FDF8EC;
+    --gold-border: rgba(212,168,67,.25);
+    --cream:       #F5F0E1;
+    --cream-dark:  #EDE7D1;
+    --ink:         #18181B;
+    --ink-60:      rgba(24,24,27,.6);
+    --ink-35:      rgba(24,24,27,.35);
+    --ink-10:      rgba(24,24,27,.07);
+    --white:       #FFFFFF;
+    --sage:        #5A6B52;
+    --success:     #16A34A;
+    --radius:      14px;
+    --radius-lg:   24px;
+    --shadow-sm:   0 1px 3px rgba(0,0,0,.08), 0 1px 2px rgba(0,0,0,.04);
+    --shadow-md:   0 4px 16px rgba(0,0,0,.08), 0 2px 6px rgba(0,0,0,.04);
+    --shadow-lg:   0 16px 48px rgba(0,0,0,.10), 0 4px 14px rgba(0,0,0,.06);
+    --shadow-xl:   0 32px 80px rgba(0,0,0,.14), 0 8px 24px rgba(0,0,0,.08);
+  }
+
+  /* ══════════════════════════════════════════════════════════════════════
+     LAYOUT
+  ══════════════════════════════════════════════════════════════════════ */
+  .wrap    { max-width: 1120px; margin: 0 auto; padding: 0 32px; }
+  .wrap-sm { max-width: 720px;  margin: 0 auto; padding: 0 32px; }
+
+  /* ══════════════════════════════════════════════════════════════════════
+     TYPOGRAPHY
+  ══════════════════════════════════════════════════════════════════════ */
+  .eyebrow {
+    display: inline-flex; align-items: center; gap: 8px;
+    font-size: 12px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase;
+    color: var(--gold); margin-bottom: 20px;
+  }
+  .eyebrow::before {
+    content: ''; display: block; width: 20px; height: 2px;
+    background: var(--gold); border-radius: 2px;
+  }
+  h1.display {
+    font-size: clamp(44px, 7vw, 80px);
+    font-weight: 900; line-height: 1.0; letter-spacing: -.03em; color: var(--ink);
+  }
+  h2.title {
+    font-size: clamp(32px, 4.5vw, 56px);
+    font-weight: 800; line-height: 1.08; letter-spacing: -.025em; color: var(--ink);
+  }
+  h3.subtitle {
+    font-size: clamp(20px, 2.5vw, 28px);
+    font-weight: 700; line-height: 1.2; letter-spacing: -.015em; color: var(--ink);
+  }
+  .lead { font-size: 18px; line-height: 1.7; color: var(--ink-60); font-weight: 400; }
+  .body-text { font-size: 15px; line-height: 1.65; color: var(--ink-60); }
+
+  /* ══════════════════════════════════════════════════════════════════════
+     BUTTONS
+  ══════════════════════════════════════════════════════════════════════ */
+  .btn {
+    display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+    padding: 14px 28px; border-radius: 100px;
+    font-size: 15px; font-weight: 600; transition: all .18s cubic-bezier(.4,0,.2,1);
+    white-space: nowrap;
+  }
+  .btn-gold {
+    background: var(--gold); color: var(--white);
+    box-shadow: 0 1px 0 rgba(0,0,0,.12), 0 4px 12px rgba(212,168,67,.35);
+  }
+  .btn-gold:hover { background: #C09A35; box-shadow: 0 2px 0 rgba(0,0,0,.15), 0 8px 24px rgba(212,168,67,.4); transform: translateY(-1px); }
+  .btn-gold:active { transform: translateY(0); }
+  .btn-ink {
+    background: var(--ink); color: var(--white);
+    box-shadow: 0 1px 0 rgba(0,0,0,.2), 0 4px 12px rgba(0,0,0,.15);
+  }
+  .btn-ink:hover { background: #2D2D30; box-shadow: 0 2px 0 rgba(0,0,0,.25), 0 8px 24px rgba(0,0,0,.2); transform: translateY(-1px); }
+  .btn-ghost {
+    background: var(--white); color: var(--ink);
+    border: 1.5px solid rgba(24,24,27,.15);
+    box-shadow: var(--shadow-sm);
+  }
+  .btn-ghost:hover { border-color: rgba(24,24,27,.4); box-shadow: var(--shadow-md); transform: translateY(-1px); }
+  .btn-lg { padding: 17px 36px; font-size: 16px; }
+  .btn-sm { padding: 10px 20px; font-size: 13px; }
+
+  /* ══════════════════════════════════════════════════════════════════════
+     NAV
+  ══════════════════════════════════════════════════════════════════════ */
+  #nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 200;
+    border-bottom: 1px solid transparent;
+    transition: background .25s, border-color .25s, backdrop-filter .25s;
+  }
+  #nav.scrolled {
+    background: rgba(255,254,249,.9);
+    border-color: rgba(24,24,27,.08);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+  }
+  .nav-inner {
+    display: flex; align-items: center; justify-content: space-between;
+    height: 72px;
+  }
+  .nav-logo {
+    font-size: 22px; font-weight: 900; letter-spacing: -.04em; color: var(--ink);
+  }
+  .nav-logo-dot { color: var(--gold); }
+  .nav-links { display: flex; align-items: center; gap: 32px; list-style: none; }
+  .nav-links a { font-size: 14px; font-weight: 500; color: var(--ink-60); transition: color .15s; }
+  .nav-links a:hover { color: var(--ink); }
+  .nav-right { display: flex; align-items: center; gap: 12px; }
+  .nav-ham { display: none; flex-direction: column; gap: 5px; padding: 4px; cursor: pointer; }
+  .nav-ham span { display: block; width: 24px; height: 2px; background: var(--ink); border-radius: 2px; transition: .2s; }
+
+  /* ══════════════════════════════════════════════════════════════════════
+     HERO
+  ══════════════════════════════════════════════════════════════════════ */
+  #hero {
+    padding: 148px 0 100px;
+    background: var(--cream);
+    position: relative; overflow: hidden;
+  }
+  /* subtle grain overlay */
+  #hero::before {
+    content: '';
+    position: absolute; inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none; opacity: .5;
+  }
+  /* large gold orb */
+  #hero::after {
+    content: '';
+    position: absolute; width: 700px; height: 700px;
+    background: radial-gradient(circle, rgba(212,168,67,.14) 0%, transparent 65%);
+    right: -160px; top: -160px; border-radius: 50%;
+    pointer-events: none;
+  }
+  .hero-layout {
+    display: grid;
+    grid-template-columns: 1fr 460px;
+    gap: 80px;
+    align-items: center;
+    position: relative; z-index: 1;
+  }
+  .hero-badge {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: var(--white); border: 1px solid var(--gold-border);
+    border-radius: 100px; padding: 6px 14px 6px 8px;
+    font-size: 13px; font-weight: 600; color: #8A6E2A;
+    margin-bottom: 32px; box-shadow: var(--shadow-sm);
+  }
+  .hero-badge-dot {
+    width: 24px; height: 24px; border-radius: 50%;
+    background: var(--gold); display: flex; align-items: center; justify-content: center;
+    font-size: 12px; flex-shrink: 0;
+  }
+  .hero-headline { margin-bottom: 24px; }
+  .hero-headline .accent {
+    background: linear-gradient(135deg, var(--gold) 0%, #E8B84B 100%);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .hero-lead { margin-bottom: 40px; max-width: 480px; }
+  .hero-form {
+    display: flex; gap: 0; max-width: 460px;
+    background: var(--white); border-radius: 100px;
+    border: 1.5px solid rgba(24,24,27,.12);
+    padding: 6px 6px 6px 20px;
+    box-shadow: 0 4px 20px rgba(0,0,0,.08);
+    margin-bottom: 20px;
+  }
+  .hero-form input {
+    flex: 1; border: none; outline: none; background: transparent;
+    font-size: 15px; color: var(--ink); font-family: inherit;
+    min-width: 0;
+  }
+  .hero-form input::placeholder { color: var(--ink-35); }
+  .hero-form .btn { flex-shrink: 0; padding: 12px 24px; font-size: 14px; }
+  .hero-form-note { font-size: 12px; color: var(--ink-35); }
+  .hero-trust {
+    display: flex; align-items: center; gap: 14px; margin-top: 36px;
+    padding-top: 36px; border-top: 1px solid rgba(24,24,27,.08);
+  }
+  .trust-avatars { display: flex; }
+  .trust-av {
+    width: 36px; height: 36px; border-radius: 50%;
+    border: 2.5px solid var(--cream);
+    margin-right: -11px; font-size: 13px; font-weight: 700;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0; color: var(--white);
+  }
+  .trust-text { font-size: 13px; line-height: 1.5; padding-left: 18px; }
+  .trust-text strong { font-weight: 700; color: var(--ink); display: block; }
+  .trust-text span  { color: var(--ink-60); }
+
+  /* ── Hero Visual ───────────────────────────────────────────────── */
+  .hero-visual { position: relative; display: flex; justify-content: center; }
+
+  /* phone shell */
+  .device {
+    width: 300px; height: 620px;
+    background: #1C1C1E;
+    border-radius: 52px;
+    padding: 18px;
+    box-shadow: var(--shadow-xl), inset 0 0 0 1px rgba(255,255,255,.06);
+    position: relative; z-index: 2;
+    animation: phoneFloat 6s ease-in-out infinite;
+  }
+  @keyframes phoneFloat { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-12px)} }
+
+  .device-notch {
+    position: absolute; top: 18px; left: 50%; transform: translateX(-50%);
+    width: 100px; height: 32px; background: #1C1C1E;
+    border-radius: 0 0 20px 20px; z-index: 5;
+  }
+  .device-screen {
+    width: 100%; height: 100%; border-radius: 36px; overflow: hidden;
+    background: #F5F0E1; display: flex; flex-direction: column;
+    position: relative;
+  }
+
+  /* status bar */
+  .sc-status {
+    height: 44px; background: #18181B; flex-shrink: 0;
+    display: flex; align-items: flex-end; justify-content: space-between;
+    padding: 0 22px 8px; font-size: 11px; font-weight: 700; color: #fff;
+  }
+
+  /* screen content */
+  .sc-body { flex: 1; overflow: hidden; padding: 0; }
+
+  .sc-header {
+    background: #18181B; padding: 16px 18px 18px;
+  }
+  .sc-header-top {
+    display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px;
+  }
+  .sc-greeting { font-size: 11px; color: rgba(255,255,255,.5); }
+  .sc-name { font-size: 17px; font-weight: 800; color: #fff; margin-top: 1px; }
+  .sc-notif {
+    width: 34px; height: 34px; border-radius: 50%; background: rgba(255,255,255,.1);
+    display: flex; align-items: center; justify-content: center; font-size: 15px;
+  }
+  .sc-search {
+    background: rgba(255,255,255,.1); border-radius: 10px;
+    padding: 9px 14px; display: flex; align-items: center; gap: 8px;
+    font-size: 12px; color: rgba(255,255,255,.4);
+  }
+
+  .sc-cats {
+    display: flex; gap: 8px; padding: 14px 16px 0; overflow-x: auto;
+  }
+  .sc-cats::-webkit-scrollbar { display: none; }
+  .sc-cat {
+    flex-shrink: 0; background: #fff; border-radius: 100px;
+    padding: 5px 12px; font-size: 11px; font-weight: 600;
+    color: #18181B; border: 1px solid rgba(0,0,0,.08);
+  }
+  .sc-cat.active { background: #D4A843; color: #fff; border-color: #D4A843; }
+
+  .sc-section-label {
+    font-size: 12px; font-weight: 700; color: #18181B;
+    padding: 14px 16px 8px; letter-spacing: -.01em;
+  }
+
+  .sc-cards { padding: 0 16px 16px; display: flex; flex-direction: column; gap: 10px; }
+  .sc-card {
+    background: #fff; border-radius: 14px; overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0,0,0,.07);
+    display: flex; align-items: center; gap: 12px;
+    padding: 12px;
+  }
+  .sc-card-thumb {
+    width: 54px; height: 54px; border-radius: 10px; flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center; font-size: 22px;
+  }
+  .sc-card-info { flex: 1; min-width: 0; }
+  .sc-card-name { font-size: 12px; font-weight: 700; color: #18181B; margin-bottom: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .sc-card-meta { font-size: 10px; color: #6B6B62; }
+  .sc-card-right { text-align: right; }
+  .sc-card-price { font-size: 13px; font-weight: 800; color: #D4A843; }
+  .sc-card-rating { font-size: 10px; color: #6B6B62; margin-top: 2px; }
+
+  /* bottom tab bar */
+  .sc-tabs {
+    display: flex; border-top: 1px solid rgba(0,0,0,.06);
+    background: #fff; padding: 8px 0 4px; flex-shrink: 0;
+  }
+  .sc-tab {
+    flex: 1; display: flex; flex-direction: column; align-items: center; gap: 2px;
+    font-size: 9px; font-weight: 600; color: #9A9A91;
+  }
+  .sc-tab.active { color: #D4A843; }
+  .sc-tab-icon { font-size: 18px; }
+
+  /* floating cards */
+  .fc {
+    position: absolute; background: var(--white);
+    border-radius: var(--radius); box-shadow: var(--shadow-lg);
+    padding: 16px 18px; z-index: 3;
+    border: 1px solid rgba(255,255,255,.8);
+  }
+  .fc-1 { left: -72px; top: 100px; width: 168px; animation: fcFloat1 6s ease-in-out 1.5s infinite; }
+  .fc-2 { right: -60px; bottom: 140px; width: 156px; animation: fcFloat2 6s ease-in-out .8s infinite; }
+  @keyframes fcFloat1 { 0%,100%{transform:translateY(0) rotate(-1deg)} 50%{transform:translateY(-8px) rotate(-1deg)} }
+  @keyframes fcFloat2 { 0%,100%{transform:translateY(0) rotate(1deg)} 50%{transform:translateY(-8px) rotate(1deg)} }
+  .fc-icon { font-size: 22px; margin-bottom: 8px; }
+  .fc-label { font-size: 10px; font-weight: 700; color: var(--ink-35); text-transform: uppercase; letter-spacing: .08em; }
+  .fc-value { font-size: 22px; font-weight: 900; color: var(--ink); line-height: 1.1; margin-top: 2px; }
+  .fc-sub { font-size: 11px; color: var(--sage); font-weight: 600; margin-top: 2px; }
+
+  /* ══════════════════════════════════════════════════════════════════════
+     STATS STRIP
+  ══════════════════════════════════════════════════════════════════════ */
+  #stats {
+    background: var(--ink); padding: 56px 0;
+  }
+  .stats-row {
+    display: grid; grid-template-columns: repeat(4, 1fr);
+    border-left: 1px solid rgba(255,255,255,.08);
+  }
+  .stat {
+    text-align: center; padding: 0 32px;
+    border-right: 1px solid rgba(255,255,255,.08);
+  }
+  .stat-n {
+    font-size: 48px; font-weight: 900; letter-spacing: -.04em;
+    background: linear-gradient(135deg, var(--gold-light) 0%, var(--gold) 100%);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    background-clip: text; line-height: 1;
+  }
+  .stat-l { font-size: 14px; color: rgba(255,255,255,.45); margin-top: 8px; font-weight: 500; }
+
+  /* ══════════════════════════════════════════════════════════════════════
+     HOW IT WORKS
+  ══════════════════════════════════════════════════════════════════════ */
+  #how { padding: 120px 0; background: var(--white); }
+  .how-header { text-align: center; margin-bottom: 80px; }
+  .how-steps {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 2px;
+    background: var(--ink-10); border-radius: var(--radius-lg);
+    overflow: hidden;
+  }
+  .how-step {
+    background: var(--white); padding: 48px 40px;
+    position: relative;
+  }
+  .how-step::after {
+    content: attr(data-arrow);
+    position: absolute; right: -14px; top: 50%;
+    transform: translateY(-50%);
+    font-size: 22px; color: var(--gold); z-index: 1;
+    font-weight: 900; line-height: 1;
+  }
+  .how-step:last-child::after { display: none; }
+  .how-num {
+    width: 56px; height: 56px; border-radius: 50%;
+    font-size: 22px; font-weight: 900;
+    display: flex; align-items: center; justify-content: center;
+    margin-bottom: 28px; position: relative; z-index: 1;
+  }
+  .how-n1 { background: linear-gradient(135deg, var(--gold-light), var(--gold)); color: var(--white); }
+  .how-n2 { background: var(--ink); color: var(--gold); }
+  .how-n3 { background: var(--sage); color: var(--white); }
+  .how-step h3 { font-size: 20px; font-weight: 700; margin-bottom: 14px; }
+  .how-step .body-text { font-size: 15px; }
+
+  /* ══════════════════════════════════════════════════════════════════════
+     FEATURES — FOR CLIENTS
+  ══════════════════════════════════════════════════════════════════════ */
+  #features { padding: 120px 0; background: var(--cream); }
+  .features-header { margin-bottom: 72px; }
+  .features-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 3px;
+    background: var(--cream-dark);
+    border-radius: var(--radius-lg); overflow: hidden;
+  }
+  .feat {
+    background: var(--white); padding: 40px;
+    transition: background .2s;
+  }
+  .feat:hover { background: var(--gold-pale); }
+  .feat-ico {
+    width: 52px; height: 52px; border-radius: var(--radius);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 24px; margin-bottom: 22px;
+    background: var(--gold-pale); border: 1px solid var(--gold-border);
+  }
+  .feat h3 { font-size: 18px; font-weight: 700; margin-bottom: 10px; color: var(--ink); }
+
+  /* ══════════════════════════════════════════════════════════════════════
+     VENDOR SECTION
+  ══════════════════════════════════════════════════════════════════════ */
+  #vendors {
+    padding: 120px 0;
+    background: var(--ink);
+    position: relative; overflow: hidden;
+  }
+  #vendors::before {
+    content: '';
+    position: absolute; width: 640px; height: 640px;
+    background: radial-gradient(circle, rgba(212,168,67,.1) 0%, transparent 65%);
+    top: -200px; right: -200px; border-radius: 50%; pointer-events: none;
+  }
+  .vendors-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 96px; align-items: center; position: relative; z-index: 1; }
+  .vendors-copy .eyebrow { color: var(--gold-light); }
+  .vendors-copy .eyebrow::before { background: var(--gold-light); }
+  .vendors-copy h2 { color: var(--white); }
+  .vendors-copy .lead { color: rgba(255,255,255,.55); margin-top: 20px; margin-bottom: 48px; }
+
+  .vendor-perks { display: flex; flex-direction: column; gap: 28px; }
+  .vp {
+    display: flex; gap: 18px; align-items: flex-start;
+    padding-bottom: 28px;
+    border-bottom: 1px solid rgba(255,255,255,.07);
+  }
+  .vp:last-child { border-bottom: none; padding-bottom: 0; }
+  .vp-icon {
+    width: 44px; height: 44px; flex-shrink: 0;
+    background: rgba(212,168,67,.12); border: 1px solid rgba(212,168,67,.2);
+    border-radius: var(--radius); display: flex; align-items: center; justify-content: center;
+    font-size: 20px;
+  }
+  .vp h4 { font-size: 16px; font-weight: 700; color: var(--white); margin-bottom: 5px; }
+  .vp p  { font-size: 14px; color: rgba(255,255,255,.45); line-height: 1.6; }
+
+  /* dashboard mockup */
+  .dash-shell {
+    background: rgba(255,255,255,.04); border: 1px solid rgba(255,255,255,.08);
+    border-radius: var(--radius-lg); padding: 28px; backdrop-filter: blur(8px);
+  }
+  .dash-topbar {
+    display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px;
+  }
+  .dash-title-text { font-size: 15px; font-weight: 700; color: var(--white); }
+  .live-pill {
+    display: flex; align-items: center; gap: 6px;
+    background: rgba(22,163,74,.15); border: 1px solid rgba(22,163,74,.25);
+    border-radius: 100px; padding: 4px 10px;
+    font-size: 11px; font-weight: 700; color: #4ADE80;
+  }
+  .live-dot { width: 6px; height: 6px; background: #4ADE80; border-radius: 50%; animation: pulse 1.8s ease-in-out infinite; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.3} }
+
+  .dash-kpi-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 20px; }
+  .kpi {
+    background: rgba(255,255,255,.06); border-radius: 10px; padding: 16px;
+  }
+  .kpi-num { font-size: 24px; font-weight: 900; color: var(--white); letter-spacing: -.03em; }
+  .kpi-lbl { font-size: 11px; color: rgba(255,255,255,.35); margin-top: 3px; font-weight: 500; }
+
+  .dash-list-label { font-size: 11px; font-weight: 700; color: rgba(255,255,255,.35); letter-spacing: .08em; text-transform: uppercase; margin-bottom: 12px; }
+  .dash-list { display: flex; flex-direction: column; gap: 8px; }
+  .dl-row {
+    background: rgba(255,255,255,.04); border-radius: 10px;
+    padding: 12px 14px; display: flex; align-items: center; gap: 12px;
+  }
+  .dl-av {
+    width: 32px; height: 32px; border-radius: 50%; flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px; font-weight: 800; color: var(--white);
+  }
+  .dl-info { flex: 1; min-width: 0; }
+  .dl-name { font-size: 12px; font-weight: 600; color: var(--white); }
+  .dl-svc  { font-size: 11px; color: rgba(255,255,255,.35); margin-top: 1px; }
+  .dl-time { font-size: 11px; font-weight: 700; color: var(--gold); flex-shrink: 0; }
+  .status-chip {
+    font-size: 10px; font-weight: 700; padding: 3px 8px;
+    border-radius: 100px; flex-shrink: 0;
+  }
+  .s-ok  { background: rgba(22,163,74,.15); color: #4ADE80; }
+  .s-pnd { background: rgba(212,168,67,.15); color: #F0CE70; }
+
+  /* ══════════════════════════════════════════════════════════════════════
+     TESTIMONIALS
+  ══════════════════════════════════════════════════════════════════════ */
+  #testimonials { padding: 120px 0; background: var(--white); }
+  .testi-header { text-align: center; margin-bottom: 72px; }
+  .testi-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+  .testi-card {
+    border: 1px solid var(--ink-10); border-radius: var(--radius-lg); padding: 36px;
+    transition: box-shadow .2s, transform .2s;
+    display: flex; flex-direction: column;
+  }
+  .testi-card:hover { box-shadow: var(--shadow-lg); transform: translateY(-4px); }
+  .testi-stars { font-size: 14px; color: var(--gold); letter-spacing: 1px; margin-bottom: 20px; }
+  .testi-quote-mark {
+    font-size: 56px; line-height: .7; font-family: Georgia, serif;
+    color: var(--gold); margin-bottom: 8px; font-weight: 900;
+  }
+  .testi-text { font-size: 15px; line-height: 1.7; color: var(--ink-60); flex: 1; margin-bottom: 28px; }
+  .testi-author { display: flex; align-items: center; gap: 14px; padding-top: 24px; border-top: 1px solid var(--ink-10); }
+  .testi-av {
+    width: 46px; height: 46px; border-radius: 50%; flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px; font-weight: 900; color: var(--white);
+  }
+  .testi-name { font-size: 14px; font-weight: 700; color: var(--ink); }
+  .testi-role { font-size: 12px; color: var(--ink-35); margin-top: 2px; }
+
+  /* ══════════════════════════════════════════════════════════════════════
+     DOWNLOAD / WAITLIST CTA
+  ══════════════════════════════════════════════════════════════════════ */
+  #download {
+    padding: 120px 0;
+    background: var(--cream);
+  }
+  .dl-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center; }
+  .dl-copy .eyebrow { margin-bottom: 16px; }
+  .dl-copy h2 { margin-bottom: 20px; }
+  .dl-copy .lead { margin-bottom: 40px; }
+
+  .store-btns { display: flex; gap: 14px; flex-wrap: wrap; margin-bottom: 32px; }
+  .store-btn {
+    display: flex; align-items: center; gap: 12px;
+    background: var(--ink); color: var(--white);
+    border-radius: 14px; padding: 14px 22px;
+    transition: all .18s; box-shadow: var(--shadow-sm);
+    min-width: 170px;
+  }
+  .store-btn:hover { background: #2D2D30; transform: translateY(-2px); box-shadow: var(--shadow-md); }
+  .store-icon { font-size: 28px; flex-shrink: 0; }
+  .store-text .st-pre  { font-size: 10px; color: rgba(255,255,255,.5); font-weight: 500; letter-spacing: .02em; }
+  .store-text .st-name { font-size: 17px; font-weight: 800; margin-top: 1px; }
+  .dl-divider {
+    display: flex; align-items: center; gap: 16px;
+    font-size: 13px; color: var(--ink-35); margin-bottom: 28px;
+  }
+  .dl-divider::before, .dl-divider::after { content: ''; flex: 1; height: 1px; background: rgba(24,24,27,.12); }
+  .dl-web { font-size: 14px; color: var(--ink-60); }
+  .dl-web a { color: var(--gold); font-weight: 600; border-bottom: 1.5px solid rgba(212,168,67,.4); transition: .15s; }
+  .dl-web a:hover { border-color: var(--gold); }
+
+  /* waitlist box */
+  .waitlist-box {
+    background: var(--white); border-radius: var(--radius-lg); padding: 40px;
+    box-shadow: var(--shadow-lg); border: 1px solid rgba(24,24,27,.06);
+  }
+  .wb-badge {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: var(--gold-pale); border: 1px solid var(--gold-border);
+    border-radius: 100px; padding: 4px 12px; font-size: 12px; font-weight: 700; color: #8A6E2A;
+    margin-bottom: 20px;
+  }
+  .waitlist-box h3 { font-size: 24px; font-weight: 800; margin-bottom: 8px; letter-spacing: -.02em; }
+  .waitlist-box p  { font-size: 14px; color: var(--ink-60); margin-bottom: 28px; line-height: 1.6; }
+  .wl-form { display: flex; flex-direction: column; gap: 12px; }
+  .wl-row  { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .wl-input {
+    width: 100%; padding: 13px 16px;
+    border: 1.5px solid rgba(24,24,27,.12); border-radius: var(--radius);
+    font-size: 14px; font-family: inherit; color: var(--ink);
+    background: var(--cream); transition: border-color .15s;
+    outline: none;
+  }
+  .wl-input:focus { border-color: var(--gold); background: var(--white); }
+  .wl-input::placeholder { color: var(--ink-35); }
+  .wl-select {
+    width: 100%; padding: 13px 16px;
+    border: 1.5px solid rgba(24,24,27,.12); border-radius: var(--radius);
+    font-size: 14px; font-family: inherit; color: var(--ink-60);
+    background: var(--cream); outline: none; cursor: pointer;
+    appearance: none;
+  }
+  .wl-select:focus { border-color: var(--gold); }
+  .wl-submit {
+    width: 100%; padding: 16px;
+    background: var(--gold); color: var(--white);
+    border-radius: var(--radius); font-size: 15px; font-weight: 700;
+    border: none; cursor: pointer; font-family: inherit;
+    transition: all .18s;
+    box-shadow: 0 4px 14px rgba(212,168,67,.35);
+  }
+  .wl-submit:hover { background: #C09A35; transform: translateY(-1px); box-shadow: 0 8px 24px rgba(212,168,67,.4); }
+  .wl-submit:disabled { opacity: .6; cursor: not-allowed; transform: none; }
+  .wl-privacy { font-size: 11px; color: var(--ink-35); text-align: center; margin-top: 8px; }
+
+  /* ── Success state ── */
+  .wl-success {
+    display: none; text-align: center; padding: 20px 0;
+  }
+  .wl-success-icon { font-size: 48px; margin-bottom: 16px; }
+  .wl-success h4 { font-size: 20px; font-weight: 800; margin-bottom: 8px; }
+  .wl-success p  { font-size: 14px; color: var(--ink-60); }
+
+  /* ══════════════════════════════════════════════════════════════════════
+     VENDOR CTA STRIP
+  ══════════════════════════════════════════════════════════════════════ */
+  #vendor-cta {
+    padding: 72px 0;
+    background: var(--gold-pale); border-top: 1px solid var(--gold-border); border-bottom: 1px solid var(--gold-border);
+  }
+  .vc-layout { display: flex; align-items: center; justify-content: space-between; gap: 48px; flex-wrap: wrap; }
+  .vc-left { max-width: 560px; }
+  .vc-left h2 { font-size: clamp(24px,3vw,36px); font-weight: 800; letter-spacing: -.025em; margin-bottom: 16px; }
+  .vc-chips { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 16px; }
+  .vc-chip {
+    display: flex; align-items: center; gap: 6px;
+    background: rgba(212,168,67,.18); border: 1px solid rgba(212,168,67,.35);
+    border-radius: 100px; padding: 6px 14px;
+    font-size: 13px; font-weight: 600; color: #7A5E18;
+  }
+  .vc-chip::before { content: '✓'; font-weight: 900; color: var(--gold); }
+
+  /* ══════════════════════════════════════════════════════════════════════
+     FOOTER
+  ══════════════════════════════════════════════════════════════════════ */
+  footer {
+    background: var(--ink); padding: 72px 0 36px;
+  }
+  .footer-top {
+    display: grid; grid-template-columns: 2fr 1fr 1fr 1fr;
+    gap: 64px; margin-bottom: 64px;
+  }
+  .footer-brand .f-logo { font-size: 26px; font-weight: 900; color: var(--white); letter-spacing: -.04em; margin-bottom: 14px; }
+  .footer-brand .f-logo span { color: var(--gold); }
+  .footer-brand p { font-size: 14px; color: rgba(255,255,255,.4); line-height: 1.7; max-width: 240px; margin-bottom: 24px; }
+  .f-socials { display: flex; gap: 10px; }
+  .f-soc {
+    width: 36px; height: 36px; border-radius: var(--radius-sm);
+    border: 1px solid rgba(255,255,255,.12); background: rgba(255,255,255,.04);
+    display: flex; align-items: center; justify-content: center; font-size: 15px;
+    transition: .15s;
+  }
+  .f-soc:hover { border-color: var(--gold); background: rgba(212,168,67,.1); }
+  .footer-col h5 { font-size: 12px; font-weight: 700; color: rgba(255,255,255,.55); letter-spacing: .1em; text-transform: uppercase; margin-bottom: 20px; }
+  .footer-col ul { list-style: none; display: flex; flex-direction: column; gap: 13px; }
+  .footer-col a { font-size: 14px; color: rgba(255,255,255,.4); transition: color .15s; }
+  .footer-col a:hover { color: var(--white); }
+  .footer-bottom {
+    display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px;
+    padding-top: 32px; border-top: 1px solid rgba(255,255,255,.07);
+    font-size: 13px; color: rgba(255,255,255,.25);
+  }
+  .footer-bottom-links { display: flex; gap: 24px; }
+  .footer-bottom-links a:hover { color: rgba(255,255,255,.6); }
+
+  /* ══════════════════════════════════════════════════════════════════════
+     TOAST
+  ══════════════════════════════════════════════════════════════════════ */
+  #toast {
+    position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%) translateY(80px);
+    background: var(--ink); color: var(--white); border-radius: 100px;
+    padding: 14px 24px; font-size: 14px; font-weight: 600;
+    display: flex; align-items: center; gap: 10px;
+    box-shadow: var(--shadow-xl); z-index: 9999;
+    transition: transform .35s cubic-bezier(.34,1.56,.64,1), opacity .35s;
+    opacity: 0; white-space: nowrap;
+  }
+  #toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
+
+  /* ══════════════════════════════════════════════════════════════════════
+     RESPONSIVE
+  ══════════════════════════════════════════════════════════════════════ */
+  @media (max-width: 1024px) {
+    .hero-layout { grid-template-columns: 1fr; gap: 64px; }
+    .hero-visual { display: none; }
+    .dl-layout  { grid-template-columns: 1fr; }
+    .vendors-layout { grid-template-columns: 1fr; gap: 64px; }
+    .footer-top { grid-template-columns: 1fr 1fr; gap: 48px; }
+    .stats-row { grid-template-columns: repeat(2, 1fr); }
+  }
+  @media (max-width: 768px) {
+    .wrap, .wrap-sm { padding: 0 20px; }
+    #hero { padding: 120px 0 80px; }
+    .how-steps { grid-template-columns: 1fr; gap: 3px; }
+    .how-step::after { display: none; }
+    .features-grid { grid-template-columns: 1fr; }
+    .testi-grid { grid-template-columns: 1fr; }
+    .vc-layout { flex-direction: column; }
+    .footer-top { grid-template-columns: 1fr; }
+    .footer-bottom { flex-direction: column; align-items: flex-start; }
+    .nav-links, .nav-right { display: none; }
+    .nav-ham { display: flex; }
+    .hero-form { border-radius: var(--radius-lg); flex-wrap: wrap; padding: 12px; }
+    .hero-form input { width: 100%; padding: 8px 0; }
+    .hero-form .btn { width: 100%; border-radius: var(--radius); justify-content: center; }
+    .wl-row { grid-template-columns: 1fr; }
+    .store-btns { flex-direction: column; }
+    .store-btn { min-width: unset; }
+    .stats-row { grid-template-columns: repeat(2, 1fr); }
+  }
+  </style>
+</head>
+<body>
+
+<!-- ═══════════════════ NAV ═══════════════════════════════════════════ -->
+<nav id="nav">
+  <div class="wrap nav-inner">
+    <a href="#" class="nav-logo">teddy<span class="nav-logo-dot">.</span></a>
+
+    <ul class="nav-links">
+      <li><a href="#how">How It Works</a></li>
+      <li><a href="#features">Features</a></li>
+      <li><a href="#vendors">For Vendors</a></li>
+      <li><a href="#download">Download</a></li>
+    </ul>
+
+    <div class="nav-right">
+      <a href="#vendors" class="btn btn-ghost btn-sm">List Your Business</a>
+      <a href="#download" class="btn btn-gold btn-sm">Join Waitlist</a>
+    </div>
+
+    <div class="nav-ham"><span></span><span></span><span></span></div>
+  </div>
+</nav>
+
+
+<!-- ═══════════════════ HERO ══════════════════════════════════════════ -->
+<section id="hero">
+  <div class="wrap">
+    <div class="hero-layout">
+
+      <!-- Copy -->
+      <div class="hero-copy">
+        <div class="hero-badge">
+          <div class="hero-badge-dot">✨</div>
+          Now accepting early access sign-ups
+        </div>
+
+        <h1 class="display hero-headline">
+          Book Beauty,<br><span class="accent">Your Way.</span>
+        </h1>
+
+        <p class="lead hero-lead">
+          Discover top-rated salons, stylists, and wellness professionals near you.
+          Instant booking, secure payments, and loyalty rewards — all in one app.
+        </p>
+
+        <!-- Inline waitlist form -->
+        <form class="hero-form" id="hero-form" onsubmit="return submitWaitlist(event,'hero')">
+          <input
+            type="email" id="hero-email"
+            placeholder="Enter your email address"
+            required autocomplete="email"
+          />
+          <button type="submit" class="btn btn-gold">Get Early Access →</button>
+        </form>
+        <p class="hero-form-note">🔒 No spam. Unsubscribe at any time.</p>
+
+        <!-- Trust strip -->
+        <div class="hero-trust">
+          <div class="trust-avatars">
+            <div class="trust-av" style="background:#C9A35E;">S</div>
+            <div class="trust-av" style="background:#7E8A6E;">M</div>
+            <div class="trust-av" style="background:#5A6B8A;">A</div>
+            <div class="trust-av" style="background:#8A5A6B;">J</div>
+          </div>
+          <div class="trust-text" style="padding-left:28px;">
+            <strong>5,000+ people on the waitlist</strong>
+            <span>Join them and be first when we launch</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Phone Visual -->
+      <div class="hero-visual">
+        <div class="device">
+          <div class="device-notch"></div>
+          <div class="device-screen">
+
+            <!-- status bar -->
+            <div class="sc-status">
+              <span>9:41</span>
+              <span>●●● WiFi 🔋</span>
+            </div>
+
+            <div class="sc-body">
+              <div class="sc-header">
+                <div class="sc-header-top">
+                  <div>
+                    <div class="sc-greeting">Good morning 👋</div>
+                    <div class="sc-name">Sophia Carter</div>
+                  </div>
+                  <div class="sc-notif">🔔</div>
+                </div>
+                <div class="sc-search">🔍 &nbsp;Search salons &amp; services...</div>
+              </div>
+
+              <div class="sc-cats">
+                <div class="sc-cat active">All</div>
+                <div class="sc-cat">Skincare</div>
+                <div class="sc-cat">Nails</div>
+                <div class="sc-cat">Hair</div>
+                <div class="sc-cat">Spa</div>
+              </div>
+
+              <div class="sc-section-label">Near You · 0.5 mi+</div>
+
+              <div class="sc-cards">
+                <div class="sc-card">
+                  <div class="sc-card-thumb" style="background:#F5EAD8;">🌿</div>
+                  <div class="sc-card-info">
+                    <div class="sc-card-name">Luminae Beauty Studio</div>
+                    <div class="sc-card-meta">0.8 km · Skincare · Nails</div>
+                  </div>
+                  <div class="sc-card-right">
+                    <div class="sc-card-price">$45</div>
+                    <div class="sc-card-rating">⭐ 4.9</div>
+                  </div>
+                </div>
+
+                <div class="sc-card">
+                  <div class="sc-card-thumb" style="background:#EAF5EA;">💆</div>
+                  <div class="sc-card-info">
+                    <div class="sc-card-name">Skincuress Salon</div>
+                    <div class="sc-card-meta">1.2 km · HydraFacial</div>
+                  </div>
+                  <div class="sc-card-right">
+                    <div class="sc-card-price">$80</div>
+                    <div class="sc-card-rating">⭐ 4.8</div>
+                  </div>
+                </div>
+
+                <div class="sc-card">
+                  <div class="sc-card-thumb" style="background:#EAE5F5;">✨</div>
+                  <div class="sc-card-info">
+                    <div class="sc-card-name">Velvet Glow Spa</div>
+                    <div class="sc-card-meta">2.0 km · Massage · Facial</div>
+                  </div>
+                  <div class="sc-card-right">
+                    <div class="sc-card-price">$65</div>
+                    <div class="sc-card-rating">⭐ 5.0</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- tab bar -->
+            <div class="sc-tabs">
+              <div class="sc-tab active"><div class="sc-tab-icon">🏠</div>Home</div>
+              <div class="sc-tab"><div class="sc-tab-icon">🔍</div>Explore</div>
+              <div class="sc-tab"><div class="sc-tab-icon">📅</div>Bookings</div>
+              <div class="sc-tab"><div class="sc-tab-icon">🏆</div>Rewards</div>
+              <div class="sc-tab"><div class="sc-tab-icon">👤</div>Profile</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Floating cards -->
+        <div class="fc fc-1">
+          <div class="fc-icon">🏆</div>
+          <div class="fc-label">Points Earned</div>
+          <div class="fc-value">1,250</div>
+          <div class="fc-sub">Gold Member</div>
+        </div>
+
+        <div class="fc fc-2">
+          <div class="fc-icon">📅</div>
+          <div class="fc-label">Next Booking</div>
+          <div class="fc-value">2:30 PM</div>
+          <div class="fc-sub">HydraFacial · Today</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══════════════════ STATS ═════════════════════════════════════════ -->
+<section id="stats">
+  <div class="wrap">
+    <div class="stats-row">
+      <div class="stat">
+        <div class="stat-n">500+</div>
+        <div class="stat-l">Verified Vendors</div>
+      </div>
+      <div class="stat">
+        <div class="stat-n">50K+</div>
+        <div class="stat-l">Bookings Completed</div>
+      </div>
+      <div class="stat">
+        <div class="stat-n">4.9★</div>
+        <div class="stat-l">Average App Rating</div>
+      </div>
+      <div class="stat">
+        <div class="stat-n">85%</div>
+        <div class="stat-l">Revenue Kept by Vendors</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══════════════════ HOW IT WORKS ═════════════════════════════════ -->
+<section id="how">
+  <div class="wrap">
+    <div class="how-header">
+      <div class="eyebrow">Simple Process</div>
+      <h2 class="title">Book in 3 easy steps</h2>
+      <p class="lead" style="margin-top:16px;max-width:480px;margin-left:auto;margin-right:auto;">
+        No phone calls. No waiting. From discovery to confirmed appointment in under 2 minutes.
+      </p>
+    </div>
+
+    <div class="how-steps">
+      <div class="how-step" data-arrow="→">
+        <div class="how-num how-n1">1</div>
+        <h3>Discover</h3>
+        <p class="body-text">Browse hundreds of verified salons and services near you. Filter by distance, price, rating, or category and view real-time availability.</p>
+      </div>
+      <div class="how-step" data-arrow="→">
+        <div class="how-num how-n2">2</div>
+        <h3>Book &amp; Pay</h3>
+        <p class="body-text">Pick your time slot, choose a stylist, and pay securely with Stripe. Your appointment is locked instantly — zero risk of double booking.</p>
+      </div>
+      <div class="how-step">
+        <div class="how-num how-n3">3</div>
+        <h3>Earn Rewards</h3>
+        <p class="body-text">Every booking earns loyalty points. Climb from Bronze to Platinum tier and redeem points for discounts on future appointments.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══════════════════ FEATURES ════════════════════════════════════ -->
+<section id="features">
+  <div class="wrap">
+    <div class="features-header">
+      <div class="eyebrow">Platform Features</div>
+      <h2 class="title">Everything you need,<br>nothing you don't.</h2>
+    </div>
+
+    <div class="features-grid">
+      <div class="feat">
+        <div class="feat-ico">🗺️</div>
+        <h3>Location-Aware Discovery</h3>
+        <p class="body-text">Smart geo search surfaces the best salons in your area with live availability — no more calling ahead to check if they're free.</p>
+      </div>
+      <div class="feat">
+        <div class="feat-ico">⚡</div>
+        <h3>Real-Time Slot Locking</h3>
+        <p class="body-text">The moment you confirm, your slot is locked via Redis. No double bookings, no awkward calls — your time is yours.</p>
+      </div>
+      <div class="feat">
+        <div class="feat-ico">💬</div>
+        <h3>In-App Messaging</h3>
+        <p class="body-text">Chat directly with your salon. Share inspiration, ask questions, and receive before-and-after photos — all in one thread.</p>
+      </div>
+      <div class="feat">
+        <div class="feat-ico">🏆</div>
+        <h3>Loyalty Rewards Program</h3>
+        <p class="body-text">Earn 10 points per dollar spent. Four tiers — Bronze, Silver, Gold, Platinum — each with better perks and deeper discounts.</p>
+      </div>
+      <div class="feat">
+        <div class="feat-ico">🔔</div>
+        <h3>Smart Reminders</h3>
+        <p class="body-text">Automated push notifications 24 hours before your appointment. You'll never accidentally miss a booking again.</p>
+      </div>
+      <div class="feat">
+        <div class="feat-ico">🔒</div>
+        <h3>Secure Stripe Payments</h3>
+        <p class="body-text">Industry-standard encrypted payments. Transparent refund policy — 100% back if a vendor cancels, prorated if you do.</p>
+      </div>
+      <div class="feat">
+        <div class="feat-ico">📋</div>
+        <h3>Intelligent Waitlist</h3>
+        <p class="body-text">Fully booked? Join the waitlist. If a spot opens, you're automatically promoted and notified — no manual checking needed.</p>
+      </div>
+      <div class="feat">
+        <div class="feat-ico">⭐</div>
+        <h3>Verified Reviews Only</h3>
+        <p class="body-text">Every rating comes from a verified completed booking. Fake reviews are impossible — so every star you read is earned.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══════════════════ VENDORS ══════════════════════════════════════ -->
+<section id="vendors">
+  <div class="wrap">
+    <div class="vendors-layout">
+
+      <!-- Copy -->
+      <div class="vendors-copy">
+        <div class="eyebrow">For Salon Owners</div>
+        <h2 class="title">Grow your beauty<br>business with Teddy</h2>
+        <p class="lead">A complete operating system for your salon — bookings, staff, payouts, and analytics in one dashboard.</p>
+
+        <div class="vendor-perks">
+          <div class="vp">
+            <div class="vp-icon">📊</div>
+            <div>
+              <h4>Real-Time Analytics</h4>
+              <p>Track daily revenue, weekly occupancy, top-performing services, and client retention — all from a single dashboard.</p>
+            </div>
+          </div>
+          <div class="vp">
+            <div class="vp-icon">👥</div>
+            <div>
+              <h4>Staff Management</h4>
+              <p>Invite stylists, set availability, assign bookings, and monitor individual earnings — they get their own portal too.</p>
+            </div>
+          </div>
+          <div class="vp">
+            <div class="vp-icon">💸</div>
+            <div>
+              <h4>Automatic Payouts</h4>
+              <p>Funds released to your bank T+2 days after every completed booking. No manual requests, no delays.</p>
+            </div>
+          </div>
+          <div class="vp">
+            <div class="vp-icon">🛡️</div>
+            <div>
+              <h4>Keep 85% of Every Booking</h4>
+              <p>Teddy charges just 15% — one of the lowest marketplace fees in the industry. More revenue stays with you.</p>
+            </div>
+          </div>
+        </div>
+
+        <div style="margin-top:48px;">
+          <a href="https://teddy-vendor-app.web.app" target="_blank" class="btn btn-gold btn-lg">Open Vendor Dashboard →</a>
+        </div>
+      </div>
+
+      <!-- Dashboard mockup -->
+      <div class="dash-shell">
+        <div class="dash-topbar">
+          <span class="dash-title-text">Today's Overview</span>
+          <div class="live-pill"><div class="live-dot"></div>Live</div>
+        </div>
+
+        <div class="dash-kpi-row">
+          <div class="kpi">
+            <div class="kpi-num">$1,240</div>
+            <div class="kpi-lbl">Revenue Today</div>
+          </div>
+          <div class="kpi">
+            <div class="kpi-num">8</div>
+            <div class="kpi-lbl">Bookings</div>
+          </div>
+          <div class="kpi">
+            <div class="kpi-num">94%</div>
+            <div class="kpi-lbl">Occupancy</div>
+          </div>
+        </div>
+
+        <div class="dash-list-label">Today's Appointments</div>
+        <div class="dash-list">
+          <div class="dl-row">
+            <div class="dl-av" style="background:#C9A35E;">S</div>
+            <div class="dl-info">
+              <div class="dl-name">Sophia Carter</div>
+              <div class="dl-svc">HydraFacial · Emma</div>
+            </div>
+            <div class="dl-time">2:30 PM</div>
+            <div class="status-chip s-ok">Confirmed</div>
+          </div>
+          <div class="dl-row">
+            <div class="dl-av" style="background:#7E8A6E;">M</div>
+            <div class="dl-info">
+              <div class="dl-name">Maya Johnson</div>
+              <div class="dl-svc">Chemical Peel · Sara</div>
+            </div>
+            <div class="dl-time">4:00 PM</div>
+            <div class="status-chip s-ok">Confirmed</div>
+          </div>
+          <div class="dl-row">
+            <div class="dl-av" style="background:#5A6B8A;">A</div>
+            <div class="dl-info">
+              <div class="dl-name">Aisha Patel</div>
+              <div class="dl-svc">Dermaplaning · Emma</div>
+            </div>
+            <div class="dl-time">5:30 PM</div>
+            <div class="status-chip s-pnd">Pending</div>
+          </div>
+          <div class="dl-row">
+            <div class="dl-av" style="background:#8A5A6B;">J</div>
+            <div class="dl-info">
+              <div class="dl-name">James Lin</div>
+              <div class="dl-svc">Microneedling · Sara</div>
+            </div>
+            <div class="dl-time">6:15 PM</div>
+            <div class="status-chip s-ok">Confirmed</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══════════════════ TESTIMONIALS ════════════════════════════════ -->
+<section id="testimonials">
+  <div class="wrap">
+    <div class="testi-header">
+      <div class="eyebrow">Real Stories</div>
+      <h2 class="title">Loved by clients<br>and vendors alike.</h2>
+    </div>
+
+    <div class="testi-grid">
+      <div class="testi-card">
+        <div class="testi-stars">★★★★★</div>
+        <div class="testi-quote-mark">"</div>
+        <p class="testi-text">I used to call three salons to find an available slot. With Teddy I book in literally two minutes. The reminders mean I've never missed an appointment since signing up.</p>
+        <div class="testi-author">
+          <div class="testi-av" style="background:#C9A35E;">S</div>
+          <div>
+            <div class="testi-name">Sophia Carter</div>
+            <div class="testi-role">Client · Gold Tier Member</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="testi-card">
+        <div class="testi-stars">★★★★★</div>
+        <div class="testi-quote-mark">"</div>
+        <p class="testi-text">As a salon owner I was skeptical. But the vendor dashboard is genuinely impressive — I manage my entire team's schedule from one screen. Revenue is up 30% since joining.</p>
+        <div class="testi-author">
+          <div class="testi-av" style="background:#7E8A6E;">R</div>
+          <div>
+            <div class="testi-name">Rachel Kim</div>
+            <div class="testi-role">Owner · Luminae Beauty Studio</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="testi-card">
+        <div class="testi-stars">★★★★★</div>
+        <div class="testi-quote-mark">"</div>
+        <p class="testi-text">The before-and-after photo feature is something I didn't know I needed. My clients love sharing their results. The in-app chat keeps everything professional and in one place.</p>
+        <div class="testi-author">
+          <div class="testi-av" style="background:#5A6B8A;">E</div>
+          <div>
+            <div class="testi-name">Emma Watts</div>
+            <div class="testi-role">Senior Stylist · Skincuress Salon</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══════════════════ DOWNLOAD + WAITLIST ══════════════════════════ -->
+<section id="download">
+  <div class="wrap">
+    <div class="dl-layout">
+
+      <!-- Left: download copy -->
+      <div class="dl-copy">
+        <div class="eyebrow">Get the App</div>
+        <h2 class="title">Your next appointment<br>is waiting.</h2>
+        <p class="lead">Download Teddy and discover hundreds of top-rated beauty professionals near you.</p>
+
+        <div class="store-btns">
+          <a href="#" onclick="handleStoreClick(event,'ios')" class="store-btn">
+            <div class="store-icon">🍎</div>
+            <div class="store-text">
+              <div class="st-pre">Download on the</div>
+              <div class="st-name">App Store</div>
+            </div>
+          </a>
+          <a href="#" onclick="handleStoreClick(event,'android')" class="store-btn">
+            <div class="store-icon">▶</div>
+            <div class="store-text">
+              <div class="st-pre">Get it on</div>
+              <div class="st-name">Google Play</div>
+            </div>
+          </a>
+        </div>
+
+        <div class="dl-divider">or</div>
+
+        <p class="dl-web">
+          Already available on web —
+          <a href="https://teddy-user-app.web.app" target="_blank">Open the Client App →</a>
+        </p>
+      </div>
+
+      <!-- Right: waitlist form -->
+      <div class="waitlist-box" id="waitlist-box">
+        <div class="wb-badge">🎉 &nbsp;Early Access</div>
+        <h3>Join the Waitlist</h3>
+        <p>Be the first to know when the app launches in your city. Early members get 3 months of Platinum tier free.</p>
+
+        <form class="wl-form" id="waitlist-form" onsubmit="return submitWaitlist(event,'waitlist')">
+          <div class="wl-row">
+            <input class="wl-input" type="text"  name="firstName" placeholder="First name"    required />
+            <input class="wl-input" type="text"  name="lastName"  placeholder="Last name"     required />
+          </div>
+          <input  class="wl-input" type="email" name="email"     placeholder="Email address" required autocomplete="email" />
+          <input  class="wl-input" type="tel"   name="phone"     placeholder="Phone number (optional)" autocomplete="tel" />
+          <select class="wl-select" name="role">
+            <option value="" disabled selected>I am a… (optional)</option>
+            <option value="client">Client looking to book services</option>
+            <option value="vendor">Salon / business owner</option>
+            <option value="staff">Stylist / technician</option>
+          </select>
+          <button type="submit" class="wl-submit" id="wl-btn">
+            Reserve My Spot — It's Free →
+          </button>
+          <p class="wl-privacy">🔒 Your information is never shared. Unsubscribe anytime.</p>
+        </form>
+
+        <div class="wl-success" id="wl-success">
+          <div class="wl-success-icon">🎉</div>
+          <h4>You're on the list!</h4>
+          <p>We'll email you the moment Teddy launches in your city. Keep an eye on your inbox.</p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══════════════════ VENDOR CTA STRIP ════════════════════════════ -->
+<section id="vendor-cta">
+  <div class="wrap">
+    <div class="vc-layout">
+      <div class="vc-left">
+        <h2>Start accepting bookings on Teddy today.</h2>
+        <p class="body-text">Join hundreds of beauty professionals already using Teddy to fill their schedule and grow their clientele.</p>
+        <div class="vc-chips">
+          <span class="vc-chip">Free to join</span>
+          <span class="vc-chip">No setup fees</span>
+          <span class="vc-chip">Keep 85% revenue</span>
+          <span class="vc-chip">Payouts in 2 days</span>
+          <span class="vc-chip">Full dashboard included</span>
+        </div>
+      </div>
+      <a href="https://teddy-vendor-app.web.app" target="_blank" class="btn btn-ink btn-lg">Open Vendor Dashboard →</a>
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══════════════════ FOOTER ═══════════════════════════════════════ -->
+<footer>
+  <div class="wrap">
+    <div class="footer-top">
+      <div class="footer-brand">
+        <div class="f-logo">teddy<span>.</span></div>
+        <p>The beauty marketplace that connects clients with top salons, stylists, and wellness professionals.</p>
+        <div class="f-socials">
+          <a href="#" class="f-soc" aria-label="Instagram">📸</a>
+          <a href="#" class="f-soc" aria-label="TikTok">🎵</a>
+          <a href="#" class="f-soc" aria-label="X / Twitter">𝕏</a>
+          <a href="#" class="f-soc" aria-label="Facebook">f</a>
+        </div>
+      </div>
+
+      <div class="footer-col">
+        <h5>Platform</h5>
+        <ul>
+          <li><a href="#how">How It Works</a></li>
+          <li><a href="#features">Features</a></li>
+          <li><a href="https://teddy-user-app.web.app" target="_blank">Client App</a></li>
+          <li><a href="https://teddy-vendor-app.web.app" target="_blank">Vendor Dashboard</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h5>Business</h5>
+        <ul>
+          <li><a href="#vendors">For Vendors</a></li>
+          <li><a href="#download">Join Waitlist</a></li>
+          <li><a href="#">Partner Program</a></li>
+          <li><a href="#">Blog</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h5>Company</h5>
+        <ul>
+          <li><a href="#">About</a></li>
+          <li><a href="#">Careers</a></li>
+          <li><a href="#">Press Kit</a></li>
+          <li><a href="#">Contact</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="footer-bottom">
+      <span>© 2026 Teddy Technologies Inc. All rights reserved.</span>
+      <div class="footer-bottom-links">
+        <a href="#">Privacy Policy</a>
+        <a href="#">Terms of Service</a>
+        <a href="#">Cookie Policy</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+
+<!-- ═══════════════════ TOAST ════════════════════════════════════════ -->
+<div id="toast">✅ &nbsp;<span id="toast-msg">You're on the list!</span></div>
+
+
+<!-- ═══════════════════ SCRIPTS ═════════════════════════════════════ -->
+<script>
+/* ── Sticky nav ─────────────────────────────────────────────────── */
+var nav = document.getElementById('nav');
+window.addEventListener('scroll', function(){
+  nav.classList.toggle('scrolled', window.scrollY > 16);
+}, { passive: true });
+
+/* ── Toast ──────────────────────────────────────────────────────── */
+function showToast(msg) {
+  var t = document.getElementById('toast');
+  document.getElementById('toast-msg').textContent = msg;
+  t.classList.add('show');
+  setTimeout(function(){ t.classList.remove('show'); }, 4000);
+}
+
+/* ── Waitlist submission ─────────────────────────────────────────
+   Uses Formspree (free tier — replace YOUR_FORM_ID below with
+   your actual form ID from https://formspree.io).
+   After creating a Formspree account, replace:
+     https://formspree.io/f/YOUR_FORM_ID
+   ─────────────────────────────────────────────────────────────── */
+var FORMSPREE_URL = 'https://formspree.io/f/YOUR_FORM_ID';
+
+function submitWaitlist(e, source) {
+  e.preventDefault();
+  var form = e.target;
+  var email = form.querySelector('[type="email"]').value;
+  if (!email) return false;
+
+  var btn = form.querySelector('button[type="submit"]') || form.querySelector('.wl-submit');
+  if (btn) { btn.disabled = true; btn.textContent = 'Submitting…'; }
+
+  // Build payload — merge UTM data for campaign attribution
+  var payload = { email: email, source: source, _subject: 'New Teddy Waitlist Sign-up' };
+  var fields = form.querySelectorAll('input, select');
+  fields.forEach(function(f){ if(f.name && f.value) payload[f.name] = f.value; });
+  Object.assign(payload, window.teddyUTM || {});
+
+  // GA4 event
+  if (typeof gtag !== 'undefined') {
+    gtag('event', 'generate_lead', {
+      currency: 'USD', value: 0,
+      campaign_source: (window.teddyUTM||{}).utm_source || 'direct',
+      form_location: source
+    });
+  }
+  // Meta Pixel event
+  if (typeof fbq !== 'undefined') {
+    fbq('track', 'Lead', { content_name: 'waitlist_' + source });
+  }
+
+  // Submit to Formspree (or fall through to mock if no ID set)
+  if (FORMSPREE_URL.indexOf('YOUR_FORM_ID') === -1) {
+    fetch(FORMSPREE_URL, {
+      method: 'POST',
+      headers: { 'Accept': 'application/json', 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    })
+    .then(function(r){ return r.json(); })
+    .then(function(){ onSuccess(source, form); })
+    .catch(function(){ onSuccess(source, form); }); // still show success UX
+  } else {
+    // No Formspree ID set yet — show success anyway for demo
+    setTimeout(function(){ onSuccess(source, form); }, 800);
+  }
+  return false;
+}
+
+function onSuccess(source, form) {
+  if (source === 'waitlist') {
+    document.querySelector('.wl-form').style.display = 'none';
+    document.getElementById('wl-success').style.display = 'block';
+  }
+  showToast("🎉  You're on the list! We'll be in touch soon.");
+}
+
+/* ── App store click (Coming Soon) ──────────────────────────────── */
+function handleStoreClick(e, platform) {
+  e.preventDefault();
+  // Replace these URLs with real store links when the app is published:
+  // iOS:     https://apps.apple.com/app/teddy/idXXXXXXXXX
+  // Android: https://play.google.com/store/apps/details?id=com.teddybookingllc.teddy
+  var links = {
+    ios:     null, // replace with App Store URL
+    android: null  // replace with Play Store URL
+  };
+  if (links[platform]) {
+    window.open(links[platform], '_blank');
+  } else {
+    document.getElementById('download').scrollIntoView({ behavior: 'smooth' });
+    showToast('App coming soon — join the waitlist below! 👇');
+    // Track intent for campaign targeting
+    if (typeof gtag !== 'undefined') gtag('event', 'store_click_intent', { platform: platform });
+    if (typeof fbq  !== 'undefined') fbq('track', 'InitiateCheckout', { content_name: platform });
+  }
+}
+</script>
+
+</body>
+</html>

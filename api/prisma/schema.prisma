@@ -1,0 +1,933 @@
+generator client {
+  provider      = "prisma-client-js"
+  binaryTargets = ["native", "linux-musl-openssl-3.0.x", "debian-openssl-3.0.x"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ── Enums ──────────────────────────────────────────────────────────────────────
+
+enum Role {
+  client
+  vendor_owner
+  vendor_staff
+  admin
+}
+
+enum Tier {
+  BRONZE
+  SILVER
+  GOLD
+  PLATINUM
+}
+
+enum VendorStatus {
+  PENDING
+  ACTIVE
+  REJECTED
+  SUSPENDED
+  INFO_REQUESTED
+}
+
+enum BookingStatus {
+  PENDING
+  CONFIRMED
+  IN_PROGRESS
+  COMPLETED
+  WAITLISTED
+  CANCELLED_CLIENT
+  CANCELLED_VENDOR
+  NO_SHOW
+}
+
+enum PaymentStatus {
+  PENDING
+  CAPTURED
+  REFUNDED
+  FAILED
+}
+
+enum PayoutStatus {
+  PENDING
+  PAID
+  FLAGGED
+  FAILED
+}
+
+enum SenderRole {
+  client
+  vendor
+  staff
+  admin
+}
+
+enum ProductType {
+  retail        // sold to clients at checkout
+  professional  // back-bar products used during a service
+  both
+}
+
+enum MembershipInterval {
+  monthly
+  yearly
+}
+
+enum SubscriptionStatus {
+  active
+  paused
+  cancelled
+  expired
+}
+
+enum InvoiceItemKind {
+  service
+  extra_time
+  retail
+  tip
+  gift_card
+  credit
+  deposit
+}
+
+// ── Models ─────────────────────────────────────────────────────────────────────
+
+model User {
+  id            String    @id @default(uuid())
+  email         String?   @unique
+  phone         String?   @unique
+  passwordHash  String?
+  role          Role      @default(client)
+  firstName     String
+  lastName      String
+  avatarUrl     String?
+  pointsBalance Int       @default(0)
+  tier          Tier      @default(BRONZE)
+  isActive      Boolean   @default(true)
+  canBookOnline Boolean   @default(true)  // vendors/admins can flag a client as unable to self-book
+  referredById  String?                    // the client who referred this user
+  isVerified    Boolean   @default(false)
+  pushTokens    Json      @default("[]")
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  deletedAt     DateTime?
+
+  refreshTokens         RefreshToken[]
+  vendor                Vendor?                @relation("VendorOwner")
+  staffMember           StaffMember?
+  bookingsAsClient      Booking[]              @relation("BookingClient")
+  wishlist              Wishlist[]
+  pointsTransactions    PointsTransaction[]
+  notifications         Notification[]
+  notificationPref      NotificationPreference?
+  sentMessages          Message[]
+  reviewsWritten        Review[]               @relation("ReviewAuthor")
+  chatThreadsAsClient   ChatThread[]           @relation("ThreadClient")
+  vendorApplication     VendorApplication?
+  clientProfile         ClientProfile?
+  subscriptions         Subscription[]         @relation("ClientSubscriptions")
+
+  @@index([email])
+  @@index([phone])
+  @@index([role])
+}
+
+model RefreshToken {
+  id        String   @id @default(uuid())
+  userId    String
+  jti       String   @unique
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([jti])
+}
+
+model Vendor {
+  id              String       @id @default(uuid())
+  ownerId         String       @unique
+  businessName    String
+  slug            String       @unique
+  bio             String?
+  coverUrl        String?
+  address         String?
+  lat             Float?
+  lng             Float?
+  city            String?
+  state           String?
+  galleryUrls     Json         @default("[]")
+  openHours       Json         @default("{}")
+  avgRating       Float        @default(0)
+  reviewCount     Int          @default(0)
+  bookingCount    Int          @default(0)
+  status          VendorStatus @default(PENDING)
+  commissionRate  Float        @default(0.15)
+  // ── Booking rules (business settings) ──
+  bookingWindowDays       Int     @default(60)   // how far ahead clients can book
+  memberBookingWindowDays Int?                    // members' window (null = same as above)
+  cancellationHours       Int     @default(24)   // min notice to cancel online
+  rescheduleHours         Int     @default(24)   // min notice to reschedule online
+  allowTips               Boolean @default(true)
+  cardFeePercent          Decimal @db.Decimal(5, 2) @default(0)  // optional card-processing fee %
+  // Vendor-configurable automated SMS messages: { <event>: { active: bool, text: string } }
+  smsConfig               Json    @default("{}")
+  stripeAccountId String?
+  approvedAt      DateTime?
+  createdAt       DateTime     @default(now())
+  updatedAt       DateTime     @updatedAt
+
+  owner        User          @relation("VendorOwner", fields: [ownerId], references: [id])
+  services     Service[]
+  staffMembers StaffMember[]
+  bookings     Booking[]
+  chatThreads  ChatThread[]
+  payouts      Payout[]
+  reviews      Review[]
+  blockedSlots BlockedSlot[]
+  invites      VendorInvite[]
+  products        Product[]
+  giftCards       GiftCard[]
+  membershipPlans MembershipPlan[]
+  forms           Form[]
+
+  @@index([status])
+  @@index([city])
+  @@index([slug])
+}
+
+model VendorApplication {
+  id              String       @id @default(uuid())
+  userId          String       @unique
+  businessName    String
+  ownerName       String
+  email           String
+  phone           String
+  city            String
+  address         String?
+  category        String?
+  bio             String?
+  monthlyRevenue  Float?
+  staffCount      Int?
+  status          VendorStatus @default(PENDING)
+  rejectionReason String?
+  appliedAt       DateTime     @default(now())
+  reviewedAt      DateTime?
+  reviewedByAdminId String?
+
+  user User @relation(fields: [userId], references: [id])
+
+  @@index([status])
+}
+
+model VendorInvite {
+  id         String    @id @default(uuid())
+  vendorId   String
+  email      String
+  token      String    @unique @default(uuid())
+  accepted   Boolean   @default(false)
+  expiresAt  DateTime
+  acceptedAt DateTime?
+  createdAt  DateTime  @default(now())
+
+  vendor Vendor @relation(fields: [vendorId], references: [id], onDelete: Cascade)
+
+  @@index([token])
+  @@index([email])
+}
+
+model Service {
+  id          String   @id @default(uuid())
+  vendorId    String
+  name        String
+  description String?
+  category    String
+  durationMin Int
+  price       Decimal  @db.Decimal(10, 2)
+  bufferMin   Int      @default(15)
+  isActive    Boolean  @default(true)
+  imageUrl    String?
+  isTimed          Boolean  @default(false)       // service uses an on-site countdown (massage, mani/pedi, etc.)
+  extraTimeRate    Decimal? @db.Decimal(10, 2)    // cost charged per extra 15-min block, set by the vendor
+  depositPercentage Int     @default(100)         // % charged up front to confirm; balance due at completion (100 = full prepay)
+  requiresCardOnFile Boolean @default(false)      // require a saved card even when a deposit is taken
+  directBookingSlug  String? @unique              // individual/direct booking link for this service
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  vendor   Vendor    @relation(fields: [vendorId], references: [id], onDelete: Cascade)
+  bookings Booking[]
+  protocolProducts ServiceProduct[]
+  addOns   ServiceAddOn[]
+
+  @@index([vendorId])
+  @@index([category])
+  @@index([isActive])
+}
+
+model StaffMember {
+  id               String   @id @default(uuid())
+  userId           String   @unique
+  vendorId         String
+  title            String?
+  bio              String?
+  avgRating        Float    @default(0)
+  bookingCount     Int      @default(0)
+  weeklyAvailability Json   @default("{}")
+  isActive         Boolean  @default(true)
+  // Vendor-controlled per-employee permissions (ON/OFF). Default all true so
+  // existing staff keep current access until the vendor restricts them.
+  permissions      Json     @default("{\"scheduleClients\":true,\"rescheduleClients\":true,\"moveAppointments\":true,\"manageGiftCards\":true,\"manageWorkingHours\":true,\"requestTimeOff\":true,\"createForms\":true,\"sendForms\":true,\"manageMemberships\":true,\"manageProducts\":true,\"manageWaitlist\":true}")
+  joinedAt         DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  user         User              @relation(fields: [userId], references: [id])
+  vendor       Vendor            @relation(fields: [vendorId], references: [id], onDelete: Cascade)
+  availability StaffAvailability[]
+  blockedSlots BlockedSlot[]
+  bookings     Booking[]
+
+  @@index([vendorId])
+}
+
+model StaffAvailability {
+  id            String @id @default(uuid())
+  staffMemberId String
+  dayOfWeek     Int
+  startTime     String
+  endTime       String
+
+  staffMember StaffMember @relation(fields: [staffMemberId], references: [id], onDelete: Cascade)
+
+  @@unique([staffMemberId, dayOfWeek])
+}
+
+model BlockedSlot {
+  id            String   @id @default(uuid())
+  staffMemberId String?
+  vendorId      String
+  startsAt      DateTime
+  endsAt        DateTime
+  reason        String?
+  createdAt     DateTime @default(now())
+
+  staffMember StaffMember? @relation(fields: [staffMemberId], references: [id], onDelete: SetNull)
+  vendor      Vendor       @relation(fields: [vendorId], references: [id], onDelete: Cascade)
+
+  @@index([vendorId])
+  @@index([staffMemberId])
+  @@index([startsAt])
+}
+
+model Booking {
+  id             String        @id @default(uuid())
+  clientId       String
+  vendorId       String
+  staffMemberId  String?
+  serviceId      String
+  startsAt       DateTime
+  endsAt         DateTime
+  totalAmount    Decimal       @db.Decimal(10, 2)
+  platformFee    Decimal       @db.Decimal(10, 2)
+  vendorPayout   Decimal       @db.Decimal(10, 2)
+  status         BookingStatus @default(PENDING)
+  cancelReason   String?
+  notes          String?
+  confirmedAt    DateTime?
+  startedAt      DateTime?
+  completedAt    DateTime?
+  cancelledAt    DateTime?
+
+  // ── Service timer (started by staff on-site; visible to client, vendor & staff) ──
+  timerStartedAt   DateTime?                          // when staff pressed Start
+  timerDurationMin Int?                               // booked duration the countdown runs from
+  timerExtraMin    Int      @default(0)               // extra minutes the client requested mid-service
+  timerExtraCost   Decimal  @db.Decimal(10, 2) @default(0) // additional charge for the extra time
+
+  // ── Pre-visit intake questionnaire (client fills at booking; visible to all parties) ──
+  intakeForm     Json?                                     // { skinType, allergens[], products[], goals, notes, submittedAt }
+  addOns         Json?     @default("[]")                  // selected add-ons: [{id,name,price,durationMin}]
+  reviewRequestedAt DateTime?                              // when a review request was sent to the client
+
+  // ── Deposit / balance / tip (client pays deposit at booking, balance + tip at the end) ──
+  depositAmount  Decimal   @db.Decimal(10, 2) @default(0)  // charged up front to confirm
+  balanceAmount  Decimal   @db.Decimal(10, 2) @default(0)  // remaining due at completion
+  tipAmount      Decimal   @db.Decimal(10, 2) @default(0)  // added by the client when paying the balance
+  balancePaidAt  DateTime?                                 // when the client settled the balance
+
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+
+  client          User               @relation("BookingClient", fields: [clientId], references: [id])
+  vendor          Vendor             @relation(fields: [vendorId], references: [id])
+  staffMember     StaffMember?       @relation(fields: [staffMemberId], references: [id], onDelete: SetNull)
+  service         Service            @relation(fields: [serviceId], references: [id])
+  payment         Payment?
+  review          Review?
+  waitlistEntry   WaitlistEntry?
+  invoice         Invoice?
+  beforeAfterPhotos BeforeAfterPhoto[]
+  pointsTransactions PointsTransaction[]
+  serviceRecord   ServiceRecord?
+
+  @@index([clientId])
+  @@index([vendorId])
+  @@index([staffMemberId])
+  @@index([status])
+  @@index([startsAt])
+}
+
+model WaitlistEntry {
+  id                  String   @id @default(uuid())
+  bookingId           String   @unique
+  clientId            String
+  vendorId            String
+  serviceId           String
+  staffMemberId       String?
+  requestedStartsAt   DateTime
+  position            Int      @default(1)
+  notifiedAt          DateTime?
+  createdAt           DateTime @default(now())
+
+  booking Booking @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+
+  @@index([vendorId, staffMemberId, requestedStartsAt])
+}
+
+model Payment {
+  id                     String        @id @default(uuid())
+  bookingId              String        @unique
+  stripePaymentIntentId  String        @unique
+  stripeChargeId         String?
+  amount                 Decimal       @db.Decimal(10, 2)
+  currency               String        @default("usd")
+  status                 PaymentStatus @default(PENDING)
+  refundAmount           Decimal?      @db.Decimal(10, 2)
+  refundReason           String?
+  capturedAt             DateTime?
+  refundedAt             DateTime?
+  createdAt              DateTime      @default(now())
+  updatedAt              DateTime      @updatedAt
+
+  booking Booking @relation(fields: [bookingId], references: [id])
+
+  @@index([stripePaymentIntentId])
+}
+
+model Invoice {
+  id            String   @id @default(uuid())
+  bookingId     String   @unique
+  number        String   @unique          // human-readable, e.g. INV-20260710-0001
+  vendorId      String
+  clientId      String
+  staffMemberId String?
+  serviceName   String
+  subtotal      Decimal  @db.Decimal(10, 2)              // service price
+  extraTimeCost Decimal  @db.Decimal(10, 2) @default(0)  // charged for requested extra time
+  depositPaid   Decimal  @db.Decimal(10, 2) @default(0)  // paid at booking
+  balancePaid   Decimal  @db.Decimal(10, 2) @default(0)  // paid at completion
+  tip           Decimal  @db.Decimal(10, 2) @default(0)  // goes to the staff member
+  retailSubtotal  Decimal  @db.Decimal(10, 2) @default(0)  // sum of retail products added at checkout
+  giftCardApplied Decimal  @db.Decimal(10, 2) @default(0)  // amount redeemed from gift cards
+  creditApplied   Decimal  @db.Decimal(10, 2) @default(0)  // store credit applied
+  amountDue       Decimal  @db.Decimal(10, 2) @default(0)  // final balance owed after all adjustments
+  total         Decimal  @db.Decimal(10, 2)              // grand total (service + extra + retail + tip)
+  currency      String   @default("usd")
+  createdAt     DateTime @default(now())
+
+  booking Booking       @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+  items   InvoiceItem[]
+
+  @@index([vendorId])
+  @@index([clientId])
+  @@index([staffMemberId])
+}
+
+model Payout {
+  id               String      @id @default(uuid())
+  vendorId         String
+  stripeTransferId String?
+  grossAmount      Decimal     @db.Decimal(10, 2)
+  commissionAmount Decimal     @db.Decimal(10, 2)
+  netAmount        Decimal     @db.Decimal(10, 2)
+  bookingIds       Json        @default("[]")
+  period           String?
+  scheduledAt      DateTime?
+  paidAt           DateTime?
+  status           PayoutStatus @default(PENDING)
+  flagNote         String?
+  createdAt        DateTime    @default(now())
+  updatedAt        DateTime    @updatedAt
+
+  vendor Vendor @relation(fields: [vendorId], references: [id])
+
+  @@index([vendorId])
+  @@index([status])
+}
+
+model Review {
+  id            String   @id @default(uuid())
+  bookingId     String   @unique
+  clientId      String
+  vendorId      String
+  staffMemberId String?
+  rating        Int
+  body          String?
+  isFlagged     Boolean  @default(false)
+  isVisible     Boolean  @default(true)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  booking     Booking      @relation(fields: [bookingId], references: [id])
+  client      User         @relation("ReviewAuthor", fields: [clientId], references: [id])
+  vendor      Vendor       @relation(fields: [vendorId], references: [id])
+  reviewFlags ReviewFlag[]
+
+  @@index([vendorId])
+  @@index([clientId])
+  @@index([isFlagged])
+}
+
+model ReviewFlag {
+  id                 String    @id @default(uuid())
+  reviewId           String
+  flaggedByUserId    String
+  reason             String
+  resolvedAt         DateTime?
+  resolvedByAdminId  String?
+  createdAt          DateTime  @default(now())
+
+  review Review @relation(fields: [reviewId], references: [id], onDelete: Cascade)
+
+  @@index([reviewId])
+}
+
+model BeforeAfterPhoto {
+  id            String   @id @default(uuid())
+  bookingId     String
+  vendorId      String
+  staffMemberId String?
+  beforeUrl     String?
+  afterUrl      String?
+  clientVisible Boolean  @default(false)
+  createdAt     DateTime @default(now())
+
+  booking Booking @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+
+  @@index([bookingId])
+  @@index([vendorId])
+}
+
+model Wishlist {
+  clientId  String
+  vendorId  String
+  createdAt DateTime @default(now())
+
+  client User @relation(fields: [clientId], references: [id], onDelete: Cascade)
+
+  @@id([clientId, vendorId])
+}
+
+model ChatThread {
+  id             String   @id @default(uuid())
+  vendorId       String
+  clientId       String
+  lastMessageAt  DateTime @default(now())
+  vendorArchived Boolean  @default(false)
+  clientArchived Boolean  @default(false)
+  createdAt      DateTime @default(now())
+
+  vendor   Vendor    @relation(fields: [vendorId], references: [id])
+  client   User      @relation("ThreadClient", fields: [clientId], references: [id])
+  messages Message[]
+
+  @@unique([vendorId, clientId])
+  @@index([vendorId])
+  @@index([clientId])
+}
+
+model Message {
+  id         String     @id @default(uuid())
+  threadId   String
+  senderId   String
+  senderRole SenderRole
+  body       String?
+  mediaUrl   String?
+  isRead     Boolean    @default(false)
+  readAt     DateTime?
+  createdAt  DateTime   @default(now())
+
+  thread ChatThread @relation(fields: [threadId], references: [id], onDelete: Cascade)
+  sender User       @relation(fields: [senderId], references: [id])
+
+  @@index([threadId])
+  @@index([senderId])
+}
+
+model Notification {
+  id        String   @id @default(uuid())
+  userId    String
+  title     String
+  body      String
+  deepLink  String?
+  metadata  Json     @default("{}")
+  type      String   @default("general")
+  isRead    Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([isRead])
+}
+
+model NotificationPreference {
+  id                    String  @id @default(uuid())
+  userId                String  @unique
+  emailBookingReminders Boolean @default(true)
+  emailPromotions       Boolean @default(false)
+  pushBookingUpdates    Boolean @default(true)
+  pushChatMessages      Boolean @default(true)
+  pushPromotions        Boolean @default(false)
+  smsBookingReminders   Boolean @default(true)
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model PointsTransaction {
+  id            String   @id @default(uuid())
+  userId        String
+  bookingId     String?
+  delta         Int
+  reason        String
+  balanceBefore Int
+  balanceAfter  Int
+  createdAt     DateTime @default(now())
+
+  user    User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  booking Booking? @relation(fields: [bookingId], references: [id], onDelete: SetNull)
+
+  @@index([userId])
+}
+
+// ── Clinical / retail / membership models ───────────────────────────────────────
+
+// Client medical + marketing profile, reviewed by staff before a service.
+// Editable by staff and (optionally) the client themselves.
+model ClientProfile {
+  id                String   @id @default(uuid())
+  userId            String   @unique
+  medicalHistory    String?                                 // free-text medical background
+  medicalConditions Json     @default("[]")                 // tags e.g. ["Eczema","Rosacea"]
+  employerName      String?                                 // employer / workplace
+  occupation        String?                                 // job (relevant e.g. sun exposure)
+  currentProducts   Json     @default("[]")                 // [{name, brand?}] products used at home
+  allergies         Json     @default("[]")                 // [{name, severity?, note?}] known allergies/sensitivities
+  notes             String?                                 // other important notes
+  storeCredit       Decimal  @db.Decimal(10, 2) @default(0) // account credit usable at checkout
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+// In-store product — retail (sold at checkout) and/or professional (used in service).
+model Product {
+  id          String      @id @default(uuid())
+  vendorId    String
+  name        String
+  brand       String?
+  description String?
+  type        ProductType @default(retail)
+  price       Decimal     @db.Decimal(10, 2) @default(0)  // retail price
+  cost        Decimal?    @db.Decimal(10, 2)              // wholesale cost (optional)
+  stock       Int         @default(0)
+  lowStockThreshold Int    @default(5)                    // alert when stock <= this
+  sku         String?
+  ingredients Json        @default("[]")                  // ["Aqua","Parfum",...] for allergy checks
+  imageUrl    String?
+  isActive    Boolean     @default(true)
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+
+  vendor          Vendor           @relation(fields: [vendorId], references: [id], onDelete: Cascade)
+  serviceProducts ServiceProduct[]
+  invoiceItems    InvoiceItem[]
+
+  @@index([vendorId])
+  @@index([type])
+}
+
+// The default product protocol for a service (back-bar products applied).
+model ServiceProduct {
+  id        String  @id @default(uuid())
+  serviceId String
+  productId String
+  isDefault Boolean @default(true)
+  step      Int     @default(0)
+  role      String  @default("use")  // 'use' | 'alternative' | 'avoid'
+  notes     String?                  // per-step instructions for employees
+
+  service Service @relation(fields: [serviceId], references: [id], onDelete: Cascade)
+  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@unique([serviceId, productId])
+  @@index([serviceId])
+}
+
+// Post-service documentation completed by staff after Mark Complete.
+model ServiceRecord {
+  id              String   @id @default(uuid())
+  bookingId       String   @unique
+  staffMemberId   String?
+  productsUsed    Json     @default("[]")   // [{productId, name, qty}]
+  notes           String?                   // short service description
+  reactions       String?                   // reactions / changes observed
+  recommendations String?                   // recommendations for future visits
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  booking Booking @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+}
+
+model GiftCard {
+  id            String    @id @default(uuid())
+  vendorId      String
+  code          String    @unique
+  initialAmount Decimal   @db.Decimal(10, 2)
+  balance       Decimal   @db.Decimal(10, 2)
+  purchaserId   String?                        // client who bought it
+  recipientId   String?                        // client it was issued to
+  isActive      Boolean   @default(true)
+  expiresAt     DateTime?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  vendor       Vendor        @relation(fields: [vendorId], references: [id], onDelete: Cascade)
+  invoiceItems InvoiceItem[]
+
+  @@index([vendorId])
+  @@index([code])
+}
+
+// Line items on an invoice — service, extra time, retail products, tip, plus
+// gift-card / credit / deposit adjustments applied at checkout.
+model InvoiceItem {
+  id          String          @id @default(uuid())
+  invoiceId   String
+  kind        InvoiceItemKind
+  description String
+  productId   String?
+  giftCardId  String?
+  quantity    Int             @default(1)
+  unitPrice   Decimal         @db.Decimal(10, 2)
+  amount      Decimal         @db.Decimal(10, 2)  // signed; negative for gift_card / credit / deposit
+  createdAt   DateTime        @default(now())
+
+  invoice  Invoice   @relation(fields: [invoiceId], references: [id], onDelete: Cascade)
+  product  Product?  @relation(fields: [productId], references: [id], onDelete: SetNull)
+  giftCard GiftCard? @relation(fields: [giftCardId], references: [id], onDelete: SetNull)
+
+  @@index([invoiceId])
+}
+
+model MembershipPlan {
+  id              String             @id @default(uuid())
+  vendorId        String
+  name            String
+  description     String?
+  price           Decimal            @db.Decimal(10, 2)
+  interval        MembershipInterval @default(monthly)
+  benefits        Json               @default("[]")  // ["10% off services", ...]
+  priorityBooking Boolean            @default(false) // members get booking priority
+  eligibleServiceIds Json            @default("[]")  // services this plan applies to (empty = all)
+  isActive        Boolean            @default(true)
+  createdAt       DateTime           @default(now())
+  updatedAt       DateTime           @updatedAt
+
+  vendor        Vendor         @relation(fields: [vendorId], references: [id], onDelete: Cascade)
+  subscriptions Subscription[]
+
+  @@index([vendorId])
+}
+
+model Subscription {
+  id               String             @id @default(uuid())
+  clientId         String
+  vendorId         String
+  planId           String
+  status           SubscriptionStatus @default(active)
+  startedAt        DateTime           @default(now())
+  currentPeriodEnd DateTime?
+  cancelledAt      DateTime?
+  createdAt        DateTime           @default(now())
+  updatedAt        DateTime           @updatedAt
+
+  client User           @relation("ClientSubscriptions", fields: [clientId], references: [id], onDelete: Cascade)
+  plan   MembershipPlan @relation(fields: [planId], references: [id])
+
+  @@index([clientId])
+  @@index([vendorId])
+  @@index([planId])
+}
+
+// A custom intake/consent form the vendor builds, optionally assigned to services
+// and auto-sent after booking.
+model Form {
+  id               String   @id @default(uuid())
+  vendorId         String
+  name             String
+  description      String?
+  fields           Json     @default("[]")   // [{id,label,type:'text'|'textarea'|'checkbox'|'select',required,options?}]
+  assignedServiceIds Json   @default("[]")   // service ids this form applies to
+  sendAfterBooking Boolean  @default(true)
+  requiresSignature Boolean @default(false)
+  isActive         Boolean  @default(true)
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  vendor    Vendor         @relation(fields: [vendorId], references: [id], onDelete: Cascade)
+  responses FormResponse[]
+
+  @@index([vendorId])
+}
+
+model FormResponse {
+  id         String   @id @default(uuid())
+  formId     String
+  bookingId  String?
+  clientId   String
+  answers    Json     @default("{}")   // { fieldId: value }
+  signedName String?
+  signedAt   DateTime?
+  createdAt  DateTime @default(now())
+
+  form Form @relation(fields: [formId], references: [id], onDelete: Cascade)
+
+  @@index([formId])
+  @@index([clientId])
+  @@index([bookingId])
+}
+
+// Add-on that can be attached to a service, with its own price and duration.
+model ServiceAddOn {
+  id          String   @id @default(uuid())
+  serviceId   String
+  name        String
+  description String?
+  price       Decimal  @db.Decimal(10, 2) @default(0)
+  durationMin Int      @default(0)
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  service Service @relation(fields: [serviceId], references: [id], onDelete: Cascade)
+
+  @@index([serviceId])
+}
+
+// ── P11: Vendor-customizable client preferences ──────────────────────────────
+model PreferenceQuestion {
+  id                  String   @id @default(uuid())
+  vendorId            String
+  label               String
+  description         String?
+  type                String   @default("text")  // text|yesno|select|multiselect|checkbox
+  options             Json     @default("[]")
+  required            Boolean  @default(false)
+  appliesToServiceIds Json     @default("[]")     // empty = all services
+  sortOrder           Int      @default(0)
+  isActive            Boolean  @default(true)
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+
+  @@index([vendorId])
+}
+
+model PreferenceAnswer {
+  id         String   @id @default(uuid())
+  questionId String
+  clientId   String
+  vendorId   String
+  value      Json                              // string | string[] | bool
+  updatedAt  DateTime @updatedAt
+  createdAt  DateTime @default(now())
+
+  @@unique([questionId, clientId])
+  @@index([clientId])
+}
+
+// ── P12: Vendor-set employee performance goals ───────────────────────────────
+model EmployeeGoal {
+  id            String   @id @default(uuid())
+  vendorId      String
+  staffMemberId String
+  metric        String   // revenue|clients|rebooking|retail|memberships|giftcards|retention|custom
+  label         String?
+  target        Float    @default(0)
+  period        String   @default("monthly")   // weekly|monthly
+  isActive      Boolean  @default(true)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@index([vendorId])
+  @@index([staffMemberId])
+}
+
+// ── P13: AM/PM client skincare routines ──────────────────────────────────────
+model SkincareRoutine {
+  id           String   @id @default(uuid())
+  clientId     String
+  vendorId     String
+  createdById  String?                          // staff/vendor user who authored it
+  steps        Json     @default("[]")          // [{period:'AM'|'PM', order, product, instructions, frequency, notes}]
+  sentToClient Boolean  @default(false)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@unique([clientId, vendorId])
+  @@index([clientId])
+}
+
+// ── P7: Employee reminders, checklists & personal workspace ──────────────────
+model StaffTask {
+  id            String    @id @default(uuid())
+  vendorId      String
+  staffMemberId String?                          // null = applies to all / unassigned
+  assignedById  String?                          // vendor/user who assigned (null = self-created)
+  title         String
+  notes         String?
+  dueAt         DateTime?
+  recurring     String?                          // daily|weekly|null
+  isPersonal    Boolean   @default(false)        // employee's own vs vendor-assigned
+  completed     Boolean   @default(false)
+  completedAt   DateTime?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  @@index([vendorId])
+  @@index([staffMemberId])
+}
+
+model StaffNote {
+  id            String   @id @default(uuid())
+  staffMemberId String
+  content       String
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@index([staffMemberId])
+}
+
+model StaffCheckIn {
+  id            String   @id @default(uuid())
+  staffMemberId String
+  mood          String?                          // e.g. great|good|ok|tough
+  note          String?
+  createdAt     DateTime @default(now())
+
+  @@index([staffMemberId])
+}

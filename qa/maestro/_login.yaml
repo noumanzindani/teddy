@@ -1,0 +1,20 @@
+# Shared: fresh launch → Login screen → sign in as ${EMAIL} / ${PASSWORD}
+appId: com.teddybookingllc.teddy
+---
+- runFlow: _launch.yaml
+- runFlow:
+    when: { visible: "Skip" }
+    commands:
+      - tapOn: "Skip"
+- extendedWaitUntil: { visible: "Have An Account? ", timeout: 15000 }
+- tapOn: { text: "Login", index: 0 }
+- extendedWaitUntil: { visible: "Trusted estheticians. Easy scheduling. Real results.", timeout: 10000 }
+- tapOn: "Email Address"
+- inputText: ${EMAIL}
+- tapOn: "Trusted estheticians. Easy scheduling. Real results."   # dismiss keyboard
+- tapOn: { point: "90%,44%" }     # reveal password (iOS AutoFill blanks secure fields under automation)
+- tapOn: "Password"
+- inputText: ${PASSWORD}
+- tapOn: "Trusted estheticians. Easy scheduling. Real results."
+- tapOn: { text: "Login", index: 1 }
+- waitForAnimationToEnd: { timeout: 8000 }

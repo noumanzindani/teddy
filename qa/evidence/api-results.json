@@ -1,0 +1,11 @@
+[
+  {
+    "id": "SE-22",
+    "area": "security",
+    "name": "Client cannot mark another client's payment as paid via /payments/confirm",
+    "source": "security: IDOR (payment.controller confirm has no ownership check)",
+    "status": "FAIL",
+    "detail": "qa2 confirmed sophia's intent: HTTP 200, payment now CAPTURED",
+    "ms": 57
+  }
+]

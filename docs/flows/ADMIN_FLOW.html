@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TEDDY — Admin Panel Flow</title>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+  <style>
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f0f2f5;
+      color: #1a2332;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ── Top bar ── */
+    header {
+      background-color: #1a2332;
+      padding: 14px 28px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.35);
+    }
+
+    header .brand {
+      font-size: 20px;
+      font-weight: 700;
+      color: #fff;
+      letter-spacing: 0.5px;
+    }
+
+    header .brand span {
+      color: #B89766;
+    }
+
+    header .page-title {
+      font-size: 15px;
+      color: #fff;
+      opacity: 0.88;
+      font-weight: 400;
+      letter-spacing: 0.3px;
+    }
+
+    /* ── Main content ── */
+    main {
+      flex: 1;
+      padding: 28px 32px;
+      display: flex;
+      flex-direction: column;
+      gap: 22px;
+    }
+
+    /* ── Legend ── */
+    .legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px 24px;
+      background: #fff;
+      border-radius: 10px;
+      padding: 14px 20px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+      align-items: center;
+    }
+
+    .legend-title {
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      color: #6b7280;
+      margin-right: 6px;
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      font-size: 13px;
+      color: #374151;
+      font-weight: 500;
+    }
+
+    .legend-dot {
+      width: 14px;
+      height: 14px;
+      border-radius: 3px;
+      flex-shrink: 0;
+    }
+
+    .legend-dot.start    { background-color: #F5A623; border: 2px solid #E09420; }
+    .legend-dot.process  { background-color: #4A90D9; border: 2px solid #3A7BC8; }
+    .legend-dot.decision { background-color: #7B68EE; border: 2px solid #6A57DD; }
+    .legend-dot.success  { background-color: #27AE60; border: 2px solid #1E8449; }
+    .legend-dot.error    { background-color: #E74C3C; border: 2px solid #C0392B; }
+    .legend-dot.highlight{ background-color: #E91E8C; border: 2px solid #C2185B; }
+
+    /* ── Diagram card ── */
+    .diagram-card {
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.10);
+      padding: 32px 24px;
+      overflow-x: auto;
+    }
+
+    .diagram-card .mermaid {
+      display: flex;
+      justify-content: center;
+    }
+
+    /* ── Footer ── */
+    footer {
+      background-color: #1a2332;
+      padding: 12px 28px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    footer span {
+      font-size: 13px;
+      color: rgba(255,255,255,0.65);
+    }
+
+    footer .footer-right {
+      font-size: 13px;
+      color: #B89766;
+      font-weight: 600;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top bar -->
+  <header>
+    <div class="brand"><span>TEDDY</span> Platform</div>
+    <div class="page-title">Admin Panel Flow</div>
+  </header>
+
+  <main>
+
+    <!-- Legend -->
+    <div class="legend">
+      <span class="legend-title">Legend</span>
+      <div class="legend-item"><div class="legend-dot start"></div>Start</div>
+      <div class="legend-item"><div class="legend-dot process"></div>Process</div>
+      <div class="legend-item"><div class="legend-dot decision"></div>Decision</div>
+      <div class="legend-item"><div class="legend-dot success"></div>Success</div>
+      <div class="legend-item"><div class="legend-dot error"></div>Error / Blocked</div>
+      <div class="legend-item"><div class="legend-dot highlight"></div>Highlight</div>
+    </div>
+
+    <!-- Diagram card -->
+    <div class="diagram-card">
+      <div class="mermaid">
+flowchart TD
+    S([START]) --> ADMINLOGIN[Admin Login\nadmin.teddy.app]
+    ADMINLOGIN --> IPCHECK{IP Address\nAllowed?}
+    IPCHECK -->|No| BLOCKED([Access Blocked\nUnauthorized IP])
+    IPCHECK -->|Yes| AUTHCHECK{Credentials\nValid?}
+    AUTHCHECK -->|No| ADMINLOGIN
+    AUTHCHECK -->|Yes| ADMINDASH[Admin Dashboard\nPlatform KPIs Overview]
+
+    ADMINDASH --> ASECTION{Select\nSection}
+
+    ASECTION -->|Vendor Approval| PENDINGLIST[Pending Vendor\nApplications Queue]
+    PENDINGLIST --> REVIEWAPP[Review Application\nBusiness Details · Location · Photos]
+    REVIEWAPP --> APPDEC{Admin\nDecision?}
+    APPDEC -->|Approve| APPROVEVENDOR[Approve Vendor\nTrigger Stripe Connect]
+    APPROVEVENDOR --> NOTIFYAPPROVE[Notify Vendor\nEmail and In-App]
+    NOTIFYAPPROVE --> SALONLIVE[Salon Goes Live\nVisible to Clients]
+    APPDEC -->|Reject| REJECTREASON[Enter Rejection\nReason Required]
+    REJECTREASON --> NOTIFYREJECT[Notify Vendor\nRejection Email Sent]
+    APPDEC -->|Request Info| REQUESTINFO[Send Info Request\nEmail to Vendor]
+    REQUESTINFO --> PENDINGLIST
+    APPDEC -->|Suspend Active| SUSPENDV[Suspend Vendor\nAll Bookings Blocked]
+    SUSPENDV --> NOTIFYSUSPEND[Notify Vendor\nand Affected Clients]
+
+    ASECTION -->|Users| USERSEARCH[Search Users\nName · Email · Phone · Role]
+    USERSEARCH --> USERDETAIL[View User Profile\nBookings · Spend · Reviews · Disputes]
+    USERDETAIL --> USERACT{Admin\nAction?}
+    USERACT -->|Send Warning| SENDWARN[Send Warning\nNotification to User]
+    USERACT -->|Ban User| BANCONFIRM{Confirm\nBan?}
+    BANCONFIRM -->|No| ADMINDASH
+    BANCONFIRM -->|Yes| BANUSER[Ban User Account\nRevoke All Tokens]
+    BANUSER --> BANSUCCESS[User Banned\nCannot Login]
+    USERACT -->|Restore| RESTOREUSER[Restore Banned\nAccount Access]
+    USERACT -->|View History| VIEWHISTORY[View Full Booking\nand Payment History]
+
+    ASECTION -->|Disputes| DISPUTEQUEUE[Open Disputes\nSorted by Priority and Value]
+    DISPUTEQUEUE --> REVIEWDISP[Review Dispute\nBooking · Chat Logs · Evidence]
+    REVIEWDISP --> CONTACTQ{Contact\nParties?}
+    CONTACTQ -->|Yes| CONTACTBOTH[Message Client\nand Vendor Separately]
+    CONTACTBOTH --> DISPDEC
+    CONTACTQ -->|No| DISPDEC{Resolution\nDecision?}
+    DISPDEC -->|Full Refund| FULLREF[Issue Full Refund\nvia Stripe API]
+    FULLREF --> NOTIFYBOTH[Notify Both Parties\nOutcome and Refund Amount]
+    DISPDEC -->|Partial Refund| PARTREF[Issue Partial Refund\nCustom Amount]
+    PARTREF --> NOTIFYBOTH
+    DISPDEC -->|No Refund| NOREF[Close Dispute\nNo Refund Issued]
+    NOREF --> NOTIFYBOTH
+    DISPDEC -->|Suspend Vendor| SUSPENDVD[Suspend Vendor Account\nAll Future Bookings Blocked]
+    SUSPENDVD --> NOTIFYBOTH
+
+    ASECTION -->|Analytics| ANALYTICSADMIN[Platform Analytics\nRevenue · Users · Bookings]
+    ANALYTICSADMIN --> AFILTER[Apply Filters\nDate · City · Vendor · Category]
+    AFILTER --> VIEWMETRICS[View Charts\nTop Vendors · Revenue Trend · Funnel]
+    VIEWMETRICS --> EXPORTADMIN{Export\nReport?}
+    EXPORTADMIN -->|Yes| DOWNLOADCSV[Download CSV Report\nFull Platform Data]
+    EXPORTADMIN -->|No| ADMINDASH
+
+    ASECTION -->|Payouts| PAYOUTADMIN[All Platform Payouts\nPaid and Pending]
+    PAYOUTADMIN --> PAYOUTDETAIL[View Payout Details\nVendor · Amount · Status]
+    PAYOUTDETAIL --> FLAGQ{Flag\nIssue?}
+    FLAGQ -->|Yes| FLAGPAYOUT[Flag Payout\nfor Manual Review]
+    FLAGQ -->|No| ADMINDASH
+
+    ASECTION -->|Reviews| REVIEWMOD[Flagged Reviews\nModeration Queue]
+    REVIEWMOD --> READREVIEW[Read Review Content\nCheck for Violations]
+    READREVIEW --> MODDEC{Decision?}
+    MODDEC -->|Keep Visible| KEEPREV[Mark Reviewed\nRemains Visible]
+    MODDEC -->|Hide| HIDEREV[Hide Review\nRating Recalculated]
+    HIDEREV --> NOTIFYMOD[Notify Reviewer\nContent Policy Message]
+
+    ASECTION -->|Settings| ADMINSETTINGS[Platform Settings\nGlobal Configuration]
+    ADMINSETTINGS --> SETTINGTYPE{Configure\nWhat?}
+    SETTINGTYPE -->|Commission Rate| SETCOMM[Adjust Commission Percentage\nGlobal or Per-Vendor Override]
+    SETTINGTYPE -->|Loyalty Rules| SETLOYALTY[Points per Dollar\nTier Thresholds]
+    SETTINGTYPE -->|Refund Policy| SETREFUND[Update Cancellation\nand Refund Time Rules]
+    SETTINGTYPE -->|Waitlist Settings| SETWAIT[Waitlist Confirm Window\nDefault 15 Minutes]
+    SETCOMM --> SAVESETTINGS[Settings Saved\nApplied to Future Transactions]
+    SETLOYALTY --> SAVESETTINGS
+    SETREFUND --> SAVESETTINGS
+    SETWAIT --> SAVESETTINGS
+
+    classDef start fill:#F5A623,stroke:#E09420,color:#fff,font-weight:bold
+    classDef process fill:#4A90D9,stroke:#3A7BC8,color:#fff
+    classDef decision fill:#7B68EE,stroke:#6A57DD,color:#fff
+    classDef success fill:#27AE60,stroke:#1E8449,color:#fff
+    classDef error fill:#E74C3C,stroke:#C0392B,color:#fff
+    classDef highlight fill:#E91E8C,stroke:#C2185B,color:#fff
+    classDef terminal fill:#2C3E50,stroke:#1A252F,color:#fff
+
+    class S start
+    class ADMINLOGIN,PENDINGLIST,REVIEWAPP,APPROVEVENDOR,NOTIFYAPPROVE,SALONLIVE,REJECTREASON,NOTIFYREJECT,REQUESTINFO,SUSPENDV,NOTIFYSUSPEND,USERSEARCH,USERDETAIL,SENDWARN,BANUSER,BANSUCCESS,RESTOREUSER,VIEWHISTORY,DISPUTEQUEUE,REVIEWDISP,CONTACTBOTH,FULLREF,PARTREF,NOREF,NOTIFYBOTH,SUSPENDVD,ANALYTICSADMIN,AFILTER,VIEWMETRICS,DOWNLOADCSV,PAYOUTADMIN,PAYOUTDETAIL,FLAGPAYOUT,REVIEWMOD,READREVIEW,KEEPREV,HIDEREV,NOTIFYMOD,ADMINSETTINGS,SETCOMM,SETLOYALTY,SETREFUND,SETWAIT,SAVESETTINGS process
+    class IPCHECK,AUTHCHECK,ASECTION,APPDEC,USERACT,BANCONFIRM,CONTACTQ,DISPDEC,EXPORTADMIN,FLAGQ,MODDEC,SETTINGTYPE decision
+    class SALONLIVE,NOTIFYAPPROVE,BANSUCCESS,NOTIFYBOTH,SAVESETTINGS,DOWNLOADCSV,KEEPREV success
+    class BLOCKED,NOTIFYREJECT,NOREF,BANUSER,SUSPENDV,SUSPENDVD,HIDEREV error
+    class ADMINDASH,ANALYTICSADMIN,DISPUTEQUEUE,REVIEWMOD highlight
+    class BLOCKED terminal
+      </div>
+    </div>
+
+  </main>
+
+  <!-- Footer -->
+  <footer>
+    <span>Admin Web Panel</span>
+    <span class="footer-right">admin.teddy.app</span>
+  </footer>
+
+  <script>
+    mermaid.initialize({
+      startOnLoad: true,
+      theme: 'base',
+      themeVariables: {
+        fontFamily: 'Arial',
+        fontSize: "20px"
+      },
+      flowchart: {
+        useMaxWidth: false,
+        htmlLabels: true,
+        curve: 'basis'
+      }
+    });
+  </script>
+
+</body>
+</html>

@@ -1,0 +1,15 @@
+# Shared: fresh app state, connected to the local Metro dev server.
+appId: com.teddybookingllc.teddy
+---
+- launchApp:
+    clearState: true
+    clearKeychain: true
+- openLink: com.teddybookingllc.teddy://expo-development-client/?url=http%3A%2F%2Flocalhost%3A8081
+- extendedWaitUntil:
+    visible: "Skip|Signup|Login|Discover Your Glow"
+    timeout: 60000
+- runFlow:
+    when:
+      visible: "Continue"
+    commands:
+      - tapOn: "Continue"   # dismiss the dev-menu intro on first launch

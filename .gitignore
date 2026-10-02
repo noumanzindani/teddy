@@ -1,0 +1,70 @@
+# ── Dependencies ─────────────────────────────────────────────────────────────
+node_modules/
+.pnp
+.pnp.js
+
+# ── Build outputs ─────────────────────────────────────────────────────────────
+dist/
+build/
+.next/
+out/
+.expo/
+*.tsbuildinfo
+
+# ── Environment / secrets ─────────────────────────────────────────────────────
+.env
+.env.local
+.env.*.local
+!.env.example
+
+# ── RSA keys & certs ──────────────────────────────────────────────────────────
+keys/
+*.pem
+*.key
+*.crt
+
+# ── Logs ──────────────────────────────────────────────────────────────────────
+logs/
+*.log
+npm-debug.log*
+
+# ── OS / editor ───────────────────────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# ── Design reference assets (large binaries in User/) ────────────────────────
+User/*.png
+User/*.zip
+User/*.jpg
+User/*.jpeg
+
+# ── Prisma generated client (regenerated via db:generate) ────────────────────
+api/node_modules/
+
+# ── Next.js cache ─────────────────────────────────────────────────────────────
+.next/
+*.tsbuildinfo
+
+# ── Expo / React Native ───────────────────────────────────────────────────────
+.expo/
+ios/
+android/
+
+# Firebase deploy cache
+.firebase/
+
+# Self-hosted server env (contains JWT secrets)
+api/.env.server
+.tools/
+**/.env.runtime
+**/.env.dev
+.env.dev
+**/.env.server
+api/.env.dev

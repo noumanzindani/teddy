@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TEDDY — Staff Portal Flow</title>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+  <style>
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+      background: #f0f2f5;
+      color: #1a2332;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ── Top bar ── */
+    header {
+      background: #1a2332;
+      padding: 14px 28px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-shrink: 0;
+    }
+
+    header .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    header .brand .logo {
+      font-size: 22px;
+      font-weight: 900;
+      color: #B89766;
+      letter-spacing: 2px;
+    }
+
+    header .brand .platform {
+      font-size: 15px;
+      color: #ffffff;
+      font-weight: 400;
+      opacity: 0.85;
+    }
+
+    header .flow-title {
+      font-size: 15px;
+      color: #ffffff;
+      font-weight: 400;
+      opacity: 0.85;
+      letter-spacing: 0.3px;
+    }
+
+    /* ── Legend ── */
+    .legend-bar {
+      background: #ffffff;
+      border-bottom: 1px solid #e2e6ea;
+      padding: 10px 28px;
+      display: flex;
+      align-items: center;
+      gap: 24px;
+      flex-wrap: wrap;
+      flex-shrink: 0;
+    }
+
+    .legend-label {
+      font-size: 11px;
+      font-weight: 700;
+      color: #6b7280;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      margin-right: 4px;
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      font-size: 12px;
+      color: #374151;
+      font-weight: 500;
+    }
+
+    .legend-swatch {
+      width: 14px;
+      height: 14px;
+      border-radius: 3px;
+      flex-shrink: 0;
+    }
+
+    .swatch-start    { background: #F5A623; border: 1.5px solid #E09420; }
+    .swatch-process  { background: #4A90D9; border: 1.5px solid #3A7BC8; }
+    .swatch-decision { background: #7B68EE; border: 1.5px solid #6A57DD; }
+    .swatch-success  { background: #27AE60; border: 1.5px solid #1E8449; }
+    .swatch-error    { background: #E74C3C; border: 1.5px solid #C0392B; }
+    .swatch-highlight{ background: #E91E8C; border: 1.5px solid #C2185B; }
+
+    /* ── Main content ── */
+    main {
+      flex: 1;
+      padding: 28px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .diagram-card {
+      background: #ffffff;
+      border-radius: 10px;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.09), 0 1px 3px rgba(0,0,0,0.06);
+      padding: 32px 24px;
+      width: 100%;
+      max-width: 1400px;
+      overflow-x: auto;
+    }
+
+    .diagram-card .mermaid {
+      display: flex;
+      justify-content: center;
+    }
+
+    /* ── Footer ── */
+    footer {
+      background: #1a2332;
+      padding: 12px 28px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-shrink: 0;
+    }
+
+    footer span {
+      font-size: 13px;
+      color: #ffffff;
+      opacity: 0.8;
+    }
+
+    footer .footer-right {
+      font-size: 13px;
+      color: #B89766;
+      font-weight: 600;
+      letter-spacing: 0.4px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top bar -->
+  <header>
+    <div class="brand">
+      <span class="logo">TEDDY</span>
+      <span class="platform">Platform</span>
+    </div>
+    <span class="flow-title">Staff Web Portal Flow</span>
+  </header>
+
+  <!-- Legend -->
+  <div class="legend-bar">
+    <span class="legend-label">Legend</span>
+    <div class="legend-item">
+      <span class="legend-swatch swatch-start"></span>Start
+    </div>
+    <div class="legend-item">
+      <span class="legend-swatch swatch-process"></span>Process / Screen
+    </div>
+    <div class="legend-item">
+      <span class="legend-swatch swatch-decision"></span>Decision
+    </div>
+    <div class="legend-item">
+      <span class="legend-swatch swatch-success"></span>Success
+    </div>
+    <div class="legend-item">
+      <span class="legend-swatch swatch-error"></span>Error / Blocked
+    </div>
+    <div class="legend-item">
+      <span class="legend-swatch swatch-highlight"></span>Highlight
+    </div>
+  </div>
+
+  <!-- Diagram -->
+  <main>
+    <div class="diagram-card">
+      <div class="mermaid">
+%%{init: {"theme": "base", "themeVariables": {"fontFamily": "Arial", "fontSize": "20px", "lineColor": "#666666", "primaryColor": "#4A90D9", "primaryTextColor": "#ffffff", "primaryBorderColor": "#3A7BC8", "edgeLabelBackground": "#f8f9fa"}}}%%
+flowchart TD
+    S([START]) --> INVITEQ{First Time\nor Returning?}
+    INVITEQ -->|New Staff Member| EMAIL[Receive Invite Email\nfrom Salon Vendor]
+    EMAIL --> TOKENQ{Invite Link\nValid and Not Expired?}
+    TOKENQ -->|Expired| EXPIRED([Invite Expired\nAsk Vendor to Resend])
+    TOKENQ -->|Valid| ACCEPTINV[Click Accept Invite\nRedirected to Staff Portal]
+    ACCEPTINV --> CREATEACC[Create Account\nFirst Name · Last Name · Password]
+    CREATEACC --> SETUPAVAIL[Set Weekly Availability\nDrag Time Blocks per Day]
+    SETUPAVAIL --> ADDBIO[Add Bio and\nProfile Photo Optional]
+    ADDBIO --> PORTAL[Staff Portal Home\nWeekly Schedule View]
+
+    INVITEQ -->|Returning Staff| STAFFLOGIN[Staff Login\nstaff.teddy.app]
+    STAFFLOGIN --> AUTHST{Credentials\nValid?}
+    AUTHST -->|No| STAFFLOGIN
+    AUTHST -->|Yes| PORTAL
+
+    PORTAL --> STACTION{Select\nSection}
+
+    STACTION -->|Schedule| WEEKVIEW[Weekly Calendar\nAll Assigned Appointments]
+    WEEKVIEW --> APPTTODAY{Appointment\nToday?}
+    APPTTODAY -->|No Appointments| VIEWNEXT[View Next Scheduled\nAppointment]
+    APPTTODAY -->|Yes| VIEWAPPT[View Appointment Details\nClient Name · Service · Notes]
+    VIEWAPPT --> CLIENTARRIVED{Client\nArrived?}
+    CLIENTARRIVED -->|Yes| UPLOADBEFORE[Upload Before Photo\nStart of Service]
+    UPLOADBEFORE --> DOSERVICE[Perform Service\nService In Progress]
+    DOSERVICE --> UPLOADAFTER[Upload After Photo\nService Complete]
+    UPLOADAFTER --> VENDORMARK[Vendor Marks Booking\nCompleted on Dashboard]
+    VENDORMARK --> POINTSAWARDED[Client Earns\nLoyalty Points]
+    POINTSAWARDED --> PAYOUTQ{Payout\nTriggered?}
+    PAYOUTQ -->|T+2 Days| EARNUPDATED[Earnings Updated\nin Staff Portal]
+    CLIENTARRIVED -->|No-Show| REPORTNS[Inform Vendor\nof No-Show]
+    REPORTNS --> VENDORNS[Vendor Marks\nNo-Show]
+
+    STACTION -->|Clients| MYCLIENTLIST[My Client List\nAll Assigned Clients]
+    MYCLIENTLIST --> CLIENTDET[View Client Profile\nBooking History and Notes]
+    CLIENTDET --> CLIENTACT{Action?}
+    CLIENTACT -->|View Next Booking| NEXTBOOK[View Upcoming\nAppointment Details]
+    CLIENTACT -->|View Past Work| PASTWORK[View Before-After\nPhoto History]
+
+    STACTION -->|Chat| CHATST[Chat Inbox\nVendor and Client Threads]
+    CHATST --> READCHAT[Read Incoming\nMessages]
+    READCHAT --> REPLYST[Reply as Staff Member\nSender Role: Staff]
+    REPLYST --> SENTQ{Message\nSent?}
+    SENTQ -->|Yes| RECIPNOTIF[Recipient Notified\nReal-Time via Socket]
+    SENTQ -->|No| REPLYST
+
+    STACTION -->|Earnings| EARNINGSPAGE[Earnings Overview\nThis Week · This Month]
+    EARNINGSPAGE --> PERPERIOD[Select Time Period\nWeek · Month · Custom Range]
+    PERPERIOD --> EARNTABLE[Per-Booking Breakdown\nDate · Client · Service · Amount]
+    EARNTABLE --> EARNSTATUS{All Earnings\nShowing?}
+    EARNSTATUS -->|Want Breakdown| FILTERDATE[Filter by Date Range]
+    FILTERDATE --> EARNTABLE
+    EARNSTATUS -->|Done| PORTAL
+
+    STACTION -->|Performance| PERFPAGE[Performance Stats\nRating · Retention · Completion Rate]
+    PERFPAGE --> PERIODPERF[Select Period\nWeek · Month]
+    PERIODPERF --> VIEWSTATS[View Stats\nAvg Rating · Booking Count · Retention]
+    VIEWSTATS --> COMPAREQ{Compare\nPeriods?}
+    COMPAREQ -->|Yes| COMPARE[Compare vs\nPrevious Period]
+    COMPAREQ -->|No| PORTAL
+
+    STACTION -->|Profile| PROFST[Staff Profile Settings]
+    PROFST --> PROFACT{What to\nUpdate?}
+    PROFACT -->|Availability| EDITAVAIL[Edit Weekly\nTime Blocks]
+    EDITAVAIL --> SAVEAVAIL[Availability Saved\nCalendar Updated Instantly]
+    PROFACT -->|Bio and Photo| EDITBIO[Update Bio\nand Profile Image]
+    EDITBIO --> SAVEBIO[Changes Saved\nProfile Updated]
+    PROFACT -->|Password| CHANGEPW[Enter Current\nand New Password]
+    CHANGEPW --> PWSAVED[Password Changed\nSecurely Updated]
+    PROFACT -->|Logout| STAFFLOGIN
+
+    classDef start fill:#F5A623,stroke:#E09420,color:#fff,font-weight:bold
+    classDef process fill:#4A90D9,stroke:#3A7BC8,color:#fff
+    classDef decision fill:#7B68EE,stroke:#6A57DD,color:#fff
+    classDef success fill:#27AE60,stroke:#1E8449,color:#fff
+    classDef error fill:#E74C3C,stroke:#C0392B,color:#fff
+    classDef highlight fill:#E91E8C,stroke:#C2185B,color:#fff
+    classDef terminal fill:#2C3E50,stroke:#1A252F,color:#fff
+
+    class S start
+    class EMAIL,ACCEPTINV,CREATEACC,SETUPAVAIL,ADDBIO,STAFFLOGIN,WEEKVIEW,VIEWNEXT,VIEWAPPT,UPLOADBEFORE,DOSERVICE,UPLOADAFTER,VENDORMARK,REPORTNS,MYCLIENTLIST,CLIENTDET,NEXTBOOK,PASTWORK,CHATST,READCHAT,REPLYST,PERPERIOD,EARNTABLE,FILTERDATE,PERIODPERF,VIEWSTATS,COMPARE,PROFST,EDITAVAIL,EDITBIO,CHANGEPW process
+    class INVITEQ,TOKENQ,AUTHST,STACTION,APPTTODAY,CLIENTARRIVED,PAYOUTQ,CLIENTACT,SENTQ,EARNSTATUS,COMPAREQ,PROFACT decision
+    class EARNUPDATED,POINTSAWARDED,SAVEAVAIL,SAVEBIO,PWSAVED,RECIPNOTIF,VENDORNS success
+    class EXPIRED error
+    class PORTAL,EARNINGSPAGE,PERFPAGE highlight
+    class EXPIRED terminal
+      </div>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer>
+    <span>Staff Web Portal</span>
+    <span class="footer-right">staff.teddy.app</span>
+  </footer>
+
+  <script>
+    mermaid.initialize({
+      startOnLoad: true,
+      theme: 'base',
+      themeVariables: {
+        fontFamily: 'Arial',
+        fontSize: "20px",
+        lineColor: '#666666',
+        primaryColor: '#4A90D9',
+        primaryTextColor: '#ffffff',
+        primaryBorderColor: '#3A7BC8',
+        edgeLabelBackground: '#f8f9fa',
+        clusterBkg: '#f0f4ff',
+        clusterBorder: '#cdd5ff'
+      },
+      flowchart: {
+        useMaxWidth: false,
+        htmlLabels: true,
+        curve: 'basis',
+        padding: 20
+      }
+    });
+  </script>
+</body>
+</html>

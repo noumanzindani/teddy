@@ -1,0 +1,12 @@
+# U2 — Login: wrong password shows an error; right password reaches Home.
+appId: com.teddybookingllc.teddy
+name: U2 Login
+env:
+  EMAIL: qa.client1@example.com
+---
+- runFlow: { file: _login.yaml, env: { PASSWORD: "WrongPass999!" } }
+- takeScreenshot: U2-01-wrong-password
+- assertVisible: "Invalid credentials|Incorrect.*|.*[Ii]nvalid.*"
+- runFlow: { file: _login.yaml, env: { PASSWORD: "Password123!" } }
+- extendedWaitUntil: { visible: "Home, tab.*", timeout: 15000 }
+- takeScreenshot: U2-02-home

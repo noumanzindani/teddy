@@ -1,0 +1,21 @@
+# U9 — Logout from the side drawer must end the session: reopening the app should NOT land on Home.
+appId: com.teddybookingllc.teddy
+name: U9 Drawer logout
+env:
+  EMAIL: sophia.carter@example.com
+  PASSWORD: Password123!
+---
+- runFlow: _login.yaml
+- extendedWaitUntil: { visible: "Home, tab.*", timeout: 15000 }
+- runFlow: _dismiss-logbox.yaml
+- tapOn: { point: "7%,10%" }          # hamburger
+- tapOn: "Logout"
+- waitForAnimationToEnd: { timeout: 5000 }
+- takeScreenshot: U9-01-after-logout
+- stopApp
+- launchApp: { clearState: false }
+- openLink: com.teddybookingllc.teddy://expo-development-client/?url=http%3A%2F%2Flocalhost%3A8081
+- waitForAnimationToEnd: { timeout: 10000 }
+- extendedWaitUntil: { visible: "Home, tab.*|Login|Signup|Skip", timeout: 30000 }
+- takeScreenshot: U9-02-after-relaunch
+- assertNotVisible: "Home, tab.*"

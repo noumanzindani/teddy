@@ -1,0 +1,6 @@
+# Dismiss the iOS "Apple Account Verification" system alert (unrelated to Teddy) by tapping
+# "Not Now" — the alert lives outside the app, so Maestro can't select it by text.
+# Never enters credentials.
+appId: com.teddybookingllc.teddy
+---
+- tapOn: { point: "33%,59%" }

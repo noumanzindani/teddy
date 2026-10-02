@@ -1,0 +1,29 @@
+# U1c — Onboarding questionnaire after sign-up (continues from U1b's Personalize step).
+appId: com.teddybookingllc.teddy
+name: U1c Onboarding
+---
+- runFlow:
+    when: { visible: "What are your main goals?" }
+    commands:
+      - takeScreenshot: U1c-01-personalize
+      - tapOn: "Next"
+- extendedWaitUntil: { visible: "Oily", timeout: 10000 }
+- tapOn: "Dry"
+- tapOn: "Hydration"
+- takeScreenshot: U1c-02-skin
+- tapOn: "Next"
+- extendedWaitUntil: { visible: "Ingredients I love", timeout: 10000 }
+- takeScreenshot: U1c-03-products
+- tapOn: "Next"
+- extendedWaitUntil: { visible: "Allergen", timeout: 10000 }
+- takeScreenshot: U1c-04-allergies
+- tapOn: "Next"
+- extendedWaitUntil: { visible: "Service types", timeout: 10000 }
+- tapOn: "Relaxing & pampering"
+- takeScreenshot: U1c-05-salon
+- tapOn: "Finish Setup"
+- extendedWaitUntil: { visible: "Profile Photo", timeout: 10000 }
+- takeScreenshot: U1c-06-photo
+- tapOn: "Skip"
+- waitForAnimationToEnd: { timeout: 8000 }
+- takeScreenshot: U1c-07-home

@@ -1,0 +1,8 @@
+# Close React Native's dev-only warning toast (it covers the tab bar). Dev builds only.
+appId: com.teddybookingllc.teddy
+---
+- waitForAnimationToEnd: { timeout: 3000 }
+- runFlow:
+    when: { visible: ".*Open debugger to view warnings.*" }
+    commands:
+      - tapOn: { point: "92%,93%" }

@@ -1,0 +1,71 @@
+# Render Blueprint — Teddy API
+# API (Docker) + managed Postgres + managed Key Value (Redis), all on Render.
+# Connection strings auto-wire via fromDatabase / fromService — nothing to paste
+# except the two JWT keys (see docs/DEPLOY_RENDER.md).
+services:
+  - type: web
+    name: teddy-api
+    runtime: docker
+    dockerfilePath: ./api/Dockerfile
+    dockerContext: ./api
+    plan: free
+    healthCheckPath: /health
+    autoDeploy: true
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 4000
+      - key: DATABASE_URL
+        fromDatabase:
+          name: teddy-db
+          property: connectionString
+      - key: REDIS_URL
+        fromService:
+          name: teddy-redis
+          type: keyvalue
+          property: connectionString
+      # JWT RS256 keys, base64-encoded — paste in the Render dashboard (see docs)
+      - key: JWT_PRIVATE_KEY_B64
+        sync: false
+      - key: JWT_PUBLIC_KEY_B64
+        sync: false
+      - key: JWT_ACCESS_EXPIRY
+        value: 15m
+      - key: JWT_REFRESH_EXPIRY
+        value: 7d
+      - key: CORS_ORIGINS
+        value: https://teddy-vendor-app.web.app,https://teddy-user-app.web.app,exp://localhost:8081
+      - key: API_BASE_URL
+        sync: false
+      # External services stay mocked for the demo
+      - key: PAYMENT_MOCK_MODE
+        value: true
+      - key: EMAIL_MOCK_MODE
+        value: true
+      - key: OTP_MOCK_MODE
+        value: true
+      - key: PUSH_MOCK_MODE
+        value: true
+      - key: MEDIA_MOCK_MODE
+        value: true
+      - key: PLATFORM_COMMISSION_RATE
+        value: 0.15
+      - key: POINTS_PER_DOLLAR
+        value: 10
+      - key: PAYOUT_DELAY_DAYS
+        value: 2
+      - key: AUTO_FINALIZE_HOURS
+        value: 24
+
+  # Managed Redis (Key Value). Empty ipAllowList = internal-only access.
+  - type: keyvalue
+    name: teddy-redis
+    plan: free
+    ipAllowList: []
+
+databases:
+  - name: teddy-db
+    plan: free
+    databaseName: teddy
+    user: teddy

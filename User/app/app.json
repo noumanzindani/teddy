@@ -1,0 +1,46 @@
+{
+  "expo": {
+    "name": "Teddy",
+    "slug": "teddy-app",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "newArchEnabled": true,
+    "splash": {
+      "image": "./assets/splash-icon.png",
+      "resizeMode": "cover",
+      "backgroundColor": "#7E8A6E"
+    },
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.teddybookingllc.teddy"
+    },
+    "android": {
+      "package": "com.teddybookingllc.teddy",
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#7E8A6E"
+      },
+      "minSdkVersion": 24
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    },
+    "plugins": [
+      "@react-native-community/datetimepicker",
+      [
+        "expo-notifications",
+        {
+          "color": "#7E8A6E"
+        }
+      ]
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "cbe9d7ca-1138-4255-bedf-8cd8d1034c81"
+      }
+    },
+    "owner": "alanp007"
+  }
+}

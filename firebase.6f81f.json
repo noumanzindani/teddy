@@ -1,0 +1,7 @@
+{
+  "hosting": [
+    { "site": "teddy-vendor-6f81f", "public": "Vendor/app/out", "ignore": ["firebase.json","**/.*","**/node_modules/**"], "rewrites": [{ "source": "**", "destination": "/index.html" }] },
+    { "site": "teddy-user-6f81f", "public": "User/app/dist", "ignore": ["firebase.json","**/.*","**/node_modules/**"], "rewrites": [{ "source": "**", "destination": "/index.html" }] },
+    { "site": "teddy-staff-6f81f", "public": "Employer/app/out", "ignore": ["firebase.json","**/.*","**/node_modules/**"], "rewrites": [{ "source": "**", "destination": "/index.html" }] }
+  ]
+}

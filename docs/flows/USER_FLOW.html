@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TEDDY — Client User Flow Diagram</title>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: Arial, sans-serif;
+      background: #f0f2f5;
+      color: #1a2332;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ── Top Bar ── */
+    .top-bar {
+      background: #1a2332;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 28px;
+      border-bottom: 3px solid #B89766;
+    }
+    .top-bar .brand {
+      font-size: 22px;
+      font-weight: 700;
+      letter-spacing: 2px;
+    }
+    .top-bar .brand span {
+      color: #B89766;
+    }
+    .top-bar .page-title {
+      font-size: 15px;
+      font-weight: 400;
+      color: #d0d8e8;
+      letter-spacing: 0.5px;
+    }
+
+    /* ── Legend ── */
+    .legend-bar {
+      background: #fff;
+      border-bottom: 1px solid #dde3ec;
+      padding: 10px 28px;
+      display: flex;
+      align-items: center;
+      gap: 24px;
+      flex-wrap: wrap;
+    }
+    .legend-bar .legend-label {
+      font-size: 12px;
+      font-weight: 700;
+      color: #1a2332;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      margin-right: 8px;
+    }
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      font-size: 13px;
+      color: #333;
+    }
+    .legend-swatch {
+      width: 18px;
+      height: 18px;
+      border-radius: 3px;
+      flex-shrink: 0;
+      border: 1px solid rgba(0,0,0,0.15);
+    }
+    .sw-start    { background: #F5A623; }
+    .sw-process  { background: #4A90D9; }
+    .sw-decision { background: #7B68EE; }
+    .sw-success  { background: #27AE60; }
+    .sw-error    { background: #E74C3C; }
+    .sw-highlight{ background: #E91E8C; }
+
+    /* ── Main content ── */
+    main {
+      flex: 1;
+      padding: 28px;
+      display: flex;
+      justify-content: center;
+    }
+
+    .diagram-card {
+      background: #fff;
+      border-radius: 10px;
+      box-shadow: 0 4px 24px rgba(26,35,50,0.10), 0 1px 4px rgba(26,35,50,0.06);
+      padding: 32px 24px;
+      width: 100%;
+      max-width: 1200px;
+      overflow-x: auto;
+    }
+
+    .diagram-card .diagram-heading {
+      font-size: 16px;
+      font-weight: 700;
+      color: #1a2332;
+      margin-bottom: 24px;
+      padding-bottom: 12px;
+      border-bottom: 2px solid #f0f2f5;
+      letter-spacing: 0.3px;
+    }
+    .diagram-card .diagram-heading span {
+      color: #B89766;
+    }
+
+    .mermaid {
+      display: flex;
+      justify-content: center;
+    }
+
+    /* ── Footer ── */
+    footer {
+      background: #1a2332;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 28px;
+      font-size: 13px;
+      border-top: 3px solid #B89766;
+    }
+    footer .footer-left {
+      font-weight: 700;
+      letter-spacing: 1px;
+      color: #B89766;
+    }
+    footer .footer-right {
+      color: #a0aec0;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Bar -->
+  <div class="top-bar">
+    <div class="brand"><span>TEDDY</span> Platform</div>
+    <div class="page-title">Client / User Application Flow</div>
+  </div>
+
+  <!-- Legend -->
+  <div class="legend-bar">
+    <span class="legend-label">Legend</span>
+    <div class="legend-item"><div class="legend-swatch sw-start"></div> Start / End</div>
+    <div class="legend-item"><div class="legend-swatch sw-process"></div> Process / Screen</div>
+    <div class="legend-item"><div class="legend-swatch sw-decision"></div> Decision</div>
+    <div class="legend-item"><div class="legend-swatch sw-success"></div> Success</div>
+    <div class="legend-item"><div class="legend-swatch sw-error"></div> Error / Blocked</div>
+    <div class="legend-item"><div class="legend-swatch sw-highlight"></div> Highlight</div>
+  </div>
+
+  <!-- Diagram -->
+  <main>
+    <div class="diagram-card">
+      <div class="diagram-heading"><span>TEDDY</span> — Client App &nbsp;|&nbsp; User Flow Diagram</div>
+      <div class="mermaid">
+flowchart TD
+    S([START]) --> LAUNCH[App Launch]
+    LAUNCH --> TOKEN{Auth Token\nExists?}
+    TOKEN -->|Yes| HOME
+    TOKEN -->|No| AUTH[Login / Register Screen]
+
+    AUTH --> ISNEW{New\nUser?}
+    ISNEW -->|No| LOGINFORM[Enter Email\n& Password]
+    ISNEW -->|Yes| REGFORM[Registration Form\nName · Email · Phone · Password]
+
+    LOGINFORM --> CREDSOK{Correct\nCredentials?}
+    CREDSOK -->|Yes| HOME[Home / Discover Screen]
+    CREDSOK -->|No| ATTEMPTS{Attempts\n3 or more?}
+    ATTEMPTS -->|No| LOGINFORM
+    ATTEMPTS -->|Yes| LOCKED[Account Temporarily\nLocked]
+    LOCKED --> RESETPW[Reset Password\nEnter Email]
+    RESETPW --> EMAILFOUND{Email\nRegistered?}
+    EMAILFOUND -->|No| RESETPW
+    EMAILFOUND -->|Yes| RESENTSENT[Reset Link Sent\nCheck Email]
+    RESENTSENT --> LOGINFORM
+
+    REGFORM --> OTPSEND[OTP Sent via SMS]
+    OTPSEND --> OTPENTER[Enter OTP Code]
+    OTPENTER --> OTPOK{OTP\nCorrect?}
+    OTPOK -->|No| OTPENTER
+    OTPOK -->|Yes| ONBOARD[Onboarding\nQuestionnaire]
+    ONBOARD --> PREFS[Select Beauty\nPreferences]
+    PREFS --> PHOTOUP{Upload\nProfile Photo?}
+    PHOTOUP -->|Yes| DOUPLOAD[Upload Photo to S3]
+    PHOTOUP -->|Skip| HOME
+    DOUPLOAD --> HOME
+
+    HOME --> NAVACT{User\nAction}
+
+    NAVACT -->|Discover| SEARCH[Search Salons\nCategory · Location · Rating]
+    SEARCH --> FILTERS[Apply Filters\nPrice · Distance · Availability]
+    FILTERS --> RESULTS[View Search Results\nCards or Map View]
+    RESULTS --> SALONVIEW[Salon Profile\nServices · Reviews · Portfolio · Staff]
+    SALONVIEW --> WANTBOOK{Book\nService?}
+    WANTBOOK -->|Save| WISHLIST[Saved to Wishlist]
+    WANTBOOK -->|Yes| SELSERVICE[Select Service]
+    SELSERVICE --> SELSTAFF[Choose Staff\nOptional]
+    SELSTAFF --> SELDATETIME[Select Date & Time\nSlot]
+    SELDATETIME --> SLOTAVAIL{Slot\nAvailable?}
+    SLOTAVAIL -->|No| WAITQ{Join\nWaitlist?}
+    WAITQ -->|No| SELDATETIME
+    WAITQ -->|Yes| WAITLISTED[Added to Waitlist\nPosition Shown]
+    SLOTAVAIL -->|Yes| BOOKSUMMARY[Booking Summary\nReview Details]
+    BOOKSUMMARY --> USEPTS{Redeem\nLoyalty Points?}
+    USEPTS -->|Yes| PTSAPPLIED[Points Applied\nDiscount Active]
+    USEPTS -->|No| PAYSCREEN
+    PTSAPPLIED --> PAYSCREEN[Payment Screen\nStripe Card Entry]
+    PAYSCREEN --> PAYCONFIRM[Confirm & Pay]
+    PAYCONFIRM --> PAYOK{Payment\nSuccessful?}
+    PAYOK -->|No| PAYFAIL[Payment Failed\nRetry or Change Card]
+    PAYFAIL --> PAYSCREEN
+    PAYOK -->|Yes| CONFIRMED[Booking Confirmed\nPush Notification Sent]
+    CONFIRMED --> HOME
+
+    NAVACT -->|My Bookings| MYBOOKINGS[My Bookings\nUpcoming · Waitlist · History]
+    MYBOOKINGS --> BSTATUS{Booking\nStatus?}
+    BSTATUS -->|Upcoming| CANCELQ{Cancel\nBooking?}
+    CANCELQ -->|No| HOME
+    CANCELQ -->|Yes| REASON[Select Cancel Reason\n5 Options + Free Text]
+    REASON --> CONFIRMCANCEL[Confirm Cancellation]
+    CONFIRMCANCEL --> REFUND[Refund Processed\nPer Policy Applied]
+    BSTATUS -->|Completed| REVIEWQ{Leave\nReview?}
+    REVIEWQ -->|No| HOME
+    REVIEWQ -->|Yes| WRITEREVIEW[Rate 1-5 Stars\nWrite Comment]
+    WRITEREVIEW --> SUBMITREVIEW[Submit Review\nRating Updated]
+    SUBMITREVIEW --> HOME
+    BSTATUS -->|Waitlisted| VIEWPOS[View Waitlist\nPosition Number]
+
+    NAVACT -->|Chat| CHATINBOX[Chat Inbox\nVendor Threads]
+    CHATINBOX --> READMSG[Read Message\nfrom Vendor]
+    READMSG --> REPLYMSG[Reply to Vendor]
+
+    NAVACT -->|Rewards| REWARDSSCR[Rewards Screen\nPoints · Tier Status]
+    REWARDSSCR --> REDEEMQ{Redeem\nPoints?}
+    REDEEMQ -->|Yes| DISCOUNT[Apply Discount\nto Next Booking]
+    REDEEMQ -->|No| HOME
+
+    NAVACT -->|Profile| PROFSCR[Profile Screen\nAvatar · Name · Settings]
+    PROFSCR --> PROFACT{Action?}
+    PROFACT -->|Edit| EDITPROF[Edit Profile\nSave Changes]
+    PROFACT -->|Logout| AUTH
+    PROFACT -->|Delete Account| DELCONFIRM{Confirm\nDelete?}
+    DELCONFIRM -->|No| HOME
+    DELCONFIRM -->|Yes| DELETED([Account Deleted\nData Anonymized])
+
+    classDef start fill:#F5A623,stroke:#E09420,color:#fff,font-weight:bold,font-size:14px
+    classDef process fill:#4A90D9,stroke:#3A7BC8,color:#fff
+    classDef decision fill:#7B68EE,stroke:#6A57DD,color:#fff
+    classDef success fill:#27AE60,stroke:#1E8449,color:#fff
+    classDef terminal fill:#E74C3C,stroke:#C0392B,color:#fff
+    classDef highlight fill:#E91E8C,stroke:#C2185B,color:#fff
+
+    class S start
+    class LAUNCH,HOME,AUTH,LOGINFORM,REGFORM,OTPSEND,OTPENTER,ONBOARD,PREFS,DOUPLOAD,SEARCH,FILTERS,RESULTS,SALONVIEW,SELSERVICE,SELSTAFF,SELDATETIME,WAITLISTED,PAYSCREEN,PAYCONFIRM,REASON,CONFIRMCANCEL,CHATINBOX,READMSG,REPLYMSG,DISCOUNT,PROFSCR,EDITPROF,VIEWPOS,WRITEREVIEW,WISHLIST,RESETPW process
+    class TOKEN,ISNEW,CREDSOK,ATTEMPTS,EMAILFOUND,OTPOK,PHOTOUP,NAVACT,WANTBOOK,SLOTAVAIL,WAITQ,USEPTS,PAYOK,BSTATUS,CANCELQ,REVIEWQ,REDEEMQ,PROFACT,DELCONFIRM decision
+    class CONFIRMED,SUBMITREVIEW,RESENTSENT,REFUND,PTSAPPLIED success
+    class LOCKED,PAYFAIL,DELETED terminal
+    class BOOKSUMMARY,MYBOOKINGS,REWARDSSCR highlight
+      </div>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer>
+    <div class="footer-left">Client App</div>
+    <div class="footer-right">User Flow Diagram</div>
+  </footer>
+
+  <script>
+    mermaid.initialize({
+      startOnLoad: true,
+      theme: 'base',
+      themeVariables: {
+        fontFamily: 'Arial, sans-serif',
+        fontSize: "20px",
+        primaryColor: '#4A90D9',
+        primaryTextColor: '#ffffff',
+        primaryBorderColor: '#3A7BC8',
+        lineColor: '#5a6a7a',
+        secondaryColor: '#7B68EE',
+        tertiaryColor: '#f0f2f5',
+        edgeLabelBackground: '#ffffff',
+        clusterBkg: '#f8f9fb',
+        titleColor: '#1a2332'
+      },
+      flowchart: {
+        curve: 'basis',
+        padding: 20,
+        nodeSpacing: 40,
+        rankSpacing: 55,
+        useMaxWidth: true
+      }
+    });
+  </script>
+</body>
+</html>

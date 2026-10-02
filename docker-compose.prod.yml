@@ -1,0 +1,85 @@
+# Teddy — self-hosted production stack (personal server)
+# Postgres + Redis + API in one command. HTTPS via the optional `tunnel` profile
+# (Cloudflare, no domain needed) or your own reverse proxy (see docs/DEPLOY_SELF_HOSTED.md).
+#
+#   docker compose -f docker-compose.prod.yml up -d --build          # start db + redis + api
+#   docker compose -f docker-compose.prod.yml --profile seed run --rm seed   # load demo accounts
+#   docker compose -f docker-compose.prod.yml --profile tunnel up -d tunnel  # public HTTPS link
+name: teddy
+
+services:
+  postgres:
+    image: postgres:15-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: teddy
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-teddy_prod_pass}
+      POSTGRES_DB: teddy
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U teddy -d teddy"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  api:
+    build:
+      context: ./api
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    env_file:
+      - ./api/.env.server
+    environment:
+      # Compose-internal wiring overrides whatever is in .env.server
+      DATABASE_URL: postgresql://teddy:${POSTGRES_PASSWORD:-teddy_prod_pass}@postgres:5432/teddy
+      REDIS_URL: redis://redis:6379
+      NODE_ENV: production
+      PORT: 4000
+    ports:
+      - "4000:4000"          # expose directly, or keep behind the tunnel/reverse proxy
+
+  # One-off: apply migrations + load demo accounts. The prod image omits ts-node,
+  # so seeding uses the dev image (full deps). Run once after `up`:
+  #   docker compose -f docker-compose.prod.yml --profile seed run --rm seed
+  seed:
+    profiles: ["seed"]
+    build:
+      context: ./api
+      dockerfile: Dockerfile.dev
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: postgresql://teddy:${POSTGRES_PASSWORD:-teddy_prod_pass}@postgres:5432/teddy
+    command: sh -c "npx prisma migrate deploy && npm run db:seed"
+
+  # Optional public HTTPS link with no domain / no open ports (Cloudflare quick tunnel).
+  # URL is printed in this container's logs: docker compose -f docker-compose.prod.yml logs tunnel
+  tunnel:
+    profiles: ["tunnel"]
+    image: cloudflare/cloudflared:latest
+    restart: unless-stopped
+    command: tunnel --no-autoupdate --url http://api:4000
+    depends_on:
+      - api
+
+volumes:
+  postgres_data:
+  redis_data:
